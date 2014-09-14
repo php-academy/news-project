@@ -15,14 +15,12 @@
                     ?><p class="login-line"><i><?=$user->login?></i> <a href="<?=PROJECT_PATH?>/logout.php">Выход</a></p><?php
                 } else {
                     ?>
-                    <p>
                         <form action="<?=PROJECT_PATH?>/login.php" method="POST" >
                             <input type="text" name="login" >
                             <input type="password" name="password" >
                             <input type="checkbox" name="rememberMe" >
                             <input type="submit" value="Вход">
                         </form>
-                    </p>
                 <?php } ?>
                 <?php
                 if( isset($_SESSION['login_error_message']) && trim($_SESSION['login_error_message']) ){
