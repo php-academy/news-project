@@ -12,7 +12,20 @@ if( ($page-1)*NEWS_ITEMS_ON_PAGE >= $count_news ) {
     foreach( $news as $id => $news_element ) {
         require( ROOT_PROJECT_PATH . '/design/news_element.php');
     }
+}//генерация ссылок на страницы новостей
+?>
+<p> Страницы новостей 
+
+<?php
+$count_pages = ($count_news / 5) + 1;
+for($i=1; $i < $count_pages; $i++) {
+?>
+
+| <a href="?page=<?=$i ?>"> <?=$i ?> </a> |
+
+<?php
 }
 ?>
+</p>
 <?php
 require( ROOT_PROJECT_PATH . '/design/footer.php');
