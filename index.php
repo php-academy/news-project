@@ -21,7 +21,7 @@ $count_pages = ($count_news / 5) + 1;
 for($i=1; $i < $count_pages; $i++) {
 ?>
 
-| <a href="?<?=$i ?>/"> <?=$i ?> </a> |
+| <a href="<?=$i ?>/"> <?=$i ?> </a> |
 
 <?php
 }
