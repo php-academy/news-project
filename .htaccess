@@ -1,0 +1,5 @@
+Redirect 301 /news_project/1 http://student08.study.cloud-pro.ru/news_project/
+RewriteEngine On
+RewriteRule news_project/([2-9]+[0-9]*) news_project/index.php?page=$1 [L]
+
+

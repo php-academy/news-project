@@ -1,0 +1,29 @@
+.header{
+    height: 100px; 
+    width: 100%; 
+    border-bottom: 2px solid #ccc;
+    font-size: 24px;
+    text-align: center;
+    padding-top: 10px;
+}
+.footer{
+    height: 50px; 
+    width: 100%; 
+    border-top: 2px solid #ccc;
+    text-align: center;
+}
+.login-form {
+    float: right;
+    margin-top: -50px;
+}
+.error-message {
+    color: red;
+    font-size: 12px;
+}
+.text {
+    display: block;
+    margin-top: -20px;
+    margin-bot: 0px;
+}
+
+
