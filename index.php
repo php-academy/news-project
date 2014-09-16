@@ -5,8 +5,7 @@ require(ROOT_PROJECT_PATH . '/design/header.php');
 <?php
 $showNews = new NewsItemWriter($news);
 
-$id = intval($_GET['id']);
-if(isset($_GET['id'])) $showNews->writeFullNewsItem($showNews->news[$id]);
+if(isset($_GET['id'])) $showNews->writeFullNewsItem($showNews->news[intval($_GET['id'])]);
 
 else $showNews->paginator();
 
