@@ -41,16 +41,28 @@ class NewsItemWriter {
     public function __construct($news) {
         $this->news = $news;
     }
-
+    
+    /**
+     * Выводит новость в кратком виде
+     * @param NewsItem $new
+     */
     public function writeShotNewsItem($new) {
         require( ROOT_PROJECT_PATH . '/design/news_element.php');
     }
-
+    
+    /**
+     * Выводит новость целиком на страницу
+     * @param NewsItem $new
+     */
     public function writeFullNewsItem($new) {
         if(!$_GET['id'])  header("Location: " . PROJECT_PATH . "/404.php");
         require( ROOT_PROJECT_PATH . '/news/index.php');
     }
-
+    
+    /**
+     * Осуществляет разбивку списка новостей на страницы
+     * 
+     */
     public function paginator() {
         $page = ((isset($_GET['page']) && intval($_GET['page']) > 1)  ? intval($_GET['page']) : 1);
         $count_news = count($this->news);
@@ -66,7 +78,7 @@ class NewsItemWriter {
         
         $count_pages = ($count_news / NEWS_ITEMS_ON_PAGE) + 1;
             for($i=1; $i < $count_pages; $i++) {
-                 require( ROOT_PROJECT_PATH . '/design/paginator.php');
+                 require( ROOT_PROJECT_PATH . '/design/pagination.php');
 
                 }
     }
