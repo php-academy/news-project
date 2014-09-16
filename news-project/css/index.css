@@ -1,0 +1,58 @@
+.header {
+    height: 50px;
+    width: 100%;
+    text-align: center;
+    font-size: 24px;
+    padding: 5px;
+    border-bottom: 1px solid #000000;
+}
+.footer {
+    height: 50px;
+    width: 100%;
+    border-top: 2px solid #ccc;
+    text-align: center;
+    padding: 5px;
+}
+.content {
+    padding: 5px;
+}
+a, a:visited, a:hover, a:active {
+    text-decoration: none;
+    color: blue;
+}
+a:hover {
+    color: #A51111;
+}
+#news_pages, #visited_page {
+    text-decoration: none;
+    display: inline-block;
+    padding: 5px;
+    padding-top: 0px;
+    font-size: 20px;
+    text-align: center;
+    color: #0000ff;
+}
+#visited_page {
+    color: #333333;
+    width: 18px;
+    height: 22px;
+    border: 1px solid black;
+    border-top-color: #ffffff;
+}
+
+.pages {
+    display: block;
+    text-align: center;
+    margin-top: -1px;
+}
+.news {
+    border-bottom: 1px solid #000000;
+}
+.login-form {
+    float: right;
+    margin-top: -20px;
+}
+.error_message {
+    color: red;
+    font-size: 12px;
+}
