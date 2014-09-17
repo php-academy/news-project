@@ -1,6 +1,14 @@
 DirectoryIndex index.php index.html
+
+Options -Indexes
+
 ErrorDocument 404 /news_project/404.php
-Redirect /news_project/1 /news_project
+
+Redirect /news_project/src /news_project
+Redirect /news_project/data /news_project
+Redirect /news_project/design /news_project
+Redirect 301 /news_project/1/ /news_project
+
 RewriteEngine on
-RewriteRule news/item/([1-9]+[0-9]*)([/]?)$ news/index.php?id=$1 [L]
-RewriteRule ([1-9]+[0-9]*)([/]?)$ index.php?page=$1 [L]
+RewriteRule news_project/news/id/([1-9]+[0-9]*) news_project/news/?id=$1 [L]
+RewriteRule news_project/([1-9]+[0-9]*) news_project/?page=$1 [L]
