@@ -1,5 +1,5 @@
 <?php
-$news_data = array(
+$arNews = array(
     array(
         "publish_date" => "2014-09-05 14:25:00",
         "title" => "У самого синего моря",
@@ -72,18 +72,16 @@ $news_data = array(
     ),
 );
 
-$cmp_date = function($news_element_1, $news_element_2){
-    $date_1 = $news_element_1['publish_date'];
-    $date_2 = $news_element_2['publish_date'];
-    
-    $timestamp_1 = strtotime($date_1);
-    $timestamp_2 = strtotime($date_2);
-    
-    if( $timestamp_1 === $timestamp_2 ){
-        return 0;
-    } else {
-        return $timestamp_1 < $timestamp_2 ? 1 : -1;
-    }    
-};
-uasort($news_data, $cmp_date);
+$newsWriter=new NewsItemWriter();
+
+$news_data=array();
+
+foreach( $arNews as $arId => $arNews ){
+    $news_data[] = new NewsItem($arNews['publish_date'], $arNews['title'],$arNews['text'],$arId);
+}
+
+uasort($news_data, $newsWriter->compareDate($newsItem_1, $newsItem_2));
+
+
+
 return $news_data;
