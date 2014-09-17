@@ -1,5 +1,5 @@
 <?php
-define('PROJECT_PATH', '/news_project');
+define('PROJECT_PATH', '/news-project');
 define('ROOT_PROJECT_PATH', $_SERVER['DOCUMENT_ROOT'] . PROJECT_PATH);
 require(ROOT_PROJECT_PATH . '/src/init.php');
 require(ROOT_PROJECT_PATH . '/src/functions.php');
