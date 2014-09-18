@@ -167,25 +167,5 @@ class NewsItemWriter{
     }
 }
 
- /**
- * Выдает первые 2 предложения
- * или обрезает строку до 300 символов
- * @param string $text
- * @param integer $cut_length
- * @return string
- */
-  
- public function compareDate($newsItem_1, $newsItem_2){
-    $date_1 = $newsItem_1->getPublishDate();
-    $date_2 = $newsItem_2->getPublishDate();
-    
-    $timestamp_1 = strtotime($date_1);
-    $timestamp_2 = strtotime($date_2);
-    
-    if( $timestamp_1 === $timestamp_2 ){
-        return 0;
-    } else {
-        return $timestamp_1 < $timestamp_2 ? 1 : -1;
-    }    
-}
+
 }
