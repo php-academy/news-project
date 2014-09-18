@@ -97,7 +97,7 @@ class NewsItemWriter{
     
     public function writeNewsItem(NewsItem $news,$mode=1){
         
-        echo '<p><i>'.$news.getPublishDate().'</i>&nbsp;&nbsp;&nbsp;<b>'.$NewsItem->getTitle().'</b></p>';
+        echo '<p><i>'.$news->getPublishDate().'</i>&nbsp;&nbsp;&nbsp;<b>'.$NewsItem->getTitle().'</b></p>';
 
        if($mode==1){
         
@@ -165,7 +165,7 @@ class NewsItemWriter{
  * @return string
  */
   
- public function compareDate(NewsItem $newsItem_1, NewsItem $newsItem_2){
+ public function compareDate($newsItem_1, $newsItem_2){
     $date_1 = $newsItem_1->getPublishDate();
     $date_2 = $newsItem_2->getPublishDate();
     
