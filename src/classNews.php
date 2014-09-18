@@ -78,6 +78,16 @@ class NewsItem{
       
       return $this->text;
   }
+  
+    /**
+ * Возвращает нозвание новости с заглавной буквы
+ * @return integer
+ */
+  
+  public function getId(){
+      
+      return $this->id;
+  }
 }
 
   
@@ -112,7 +122,7 @@ class NewsItemWriter{
     if($mode==2){
  
         echo '<p>'.$this->cutText($news->getText()).'</p>';
-        echo '<p><a href="'.PROJECT_PATH.'/news/?id='.$news->id.'">подробнее</a></p>';
+        echo '<p><a href="'.PROJECT_PATH.'/news/?id='.$news->getId().'">подробнее</a></p>';
         echo '<hr>';
         
     } 
