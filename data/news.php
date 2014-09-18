@@ -81,7 +81,7 @@ foreach( $arNews as $arId => $arNews ){
     $news_data[] = new NewsItem($arNews['publish_date'], $arNews['title'],$arNews['text'],$arId);
 }
 
-uasort($news_data, $newsWriter->compareDate($newsItem_1, $newsItem_2));
+//uasort($news_data, $newsWriter->compareDate($newsItem_1, $newsItem_2));
 
 
 
