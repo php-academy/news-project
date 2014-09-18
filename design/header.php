@@ -9,7 +9,7 @@
     <body>
         <div class="header"> 
             Это новостной портал 
-            <div class="login-form">
+            <div class="login-area">
                 <?php
                 if( $user = $auth->getAuthorizedUser() ) {
                     ?><p class="login-line"><i><?=$user->login?></i> <a href="<?=PROJECT_PATH?>/logout.php">Выход</a></p><?php
