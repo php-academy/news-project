@@ -97,7 +97,7 @@ class NewsItemWriter{
     
     public function writeNewsItem(NewsItem $news,$mode=1){
         
-        echo '<p><i>'.$news->getPublishDate().'</i>&nbsp;&nbsp;&nbsp;<b>'.$NewsItem->getTitle().'</b></p>';
+        echo '<p><i>'.$news->getPublishDate().'</i>&nbsp;&nbsp;&nbsp;<b>'.$news->getTitle().'</b></p>';
 
        if($mode==1){
         
