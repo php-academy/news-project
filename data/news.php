@@ -1,4 +1,5 @@
 <?php
+
 $arNews = array(
     array(
         "publish_date" => "2014-09-05 14:25:00",
