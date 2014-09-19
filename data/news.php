@@ -87,3 +87,42 @@ $cmp_date = function($news_element_1, $news_element_2){
 };
 uasort($news_data, $cmp_date);
 return $news_data;
+
+$data = array();
+
+foreach( $news_data as $newsId => $new_data ){
+    $data[] = new NewsItem($newsId, $new_data['publish_date'], $new_data['title'], $new_data['text']);
+}
+return $data;
+
+class NewsItem{
+    public $publish_date;
+    public $title;
+    public $text;
+        
+    public function __construct($publish_date, $title, $text) {
+        $this->publish_date = $publish_date;
+        $this->title = $title;
+        $this->text = $text;
+    }
+}
+	
+	class NewsItemWriter{
+	public $News = array();
+	public function addNews (NewsItem $News){
+	$this->News[] = $new;
+	}
+	public function getNewsInfo() {
+        return 
+		"<h1>{$this->text}</h1>"
+        "{$this->publish_date}<br>".
+        "{$this->title}<br>";
+    }
+	public function fullWriter ()
+	foreach ( $this->News as $new ){
+            echo $new->getNewsInfoInfo();
+            echo "===============================<br>";
+        }
+	}
+	
+}
