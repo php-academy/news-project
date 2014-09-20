@@ -3,3 +3,4 @@
 .login-area{ float: right; margin-top: -20px; }
 .login-line{ font-size: 16px; }
 .login-error-message{ color: red; font-size: 12px;}
+.login-success-message{ color: green; font-size: 12px;}

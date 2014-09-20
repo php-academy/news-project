@@ -20,12 +20,6 @@ if( isset($_POST['login']) && isset($_POST['password']) && isset($_POST['repeat'
         $age,
         $avatar
     );
-    if( $arResult['result'] ){
-        $_SESSION['register_result'] = $arResult['message'];
-        header('Location: ' . (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : PROJECT_PATH)  );
-    } else {
-        $_SESSION['register_result'] = $arResult['message'];
-    }
 }
 require(ROOT_PROJECT_PATH . '/design/header.php');
 ?>
@@ -52,7 +46,11 @@ require(ROOT_PROJECT_PATH . '/design/header.php');
 </form>
 
 <?php
-if( isset($_SESSION['register_result'])  && !empty($_SESSION['register_result']) ){
-    ?><p class="login-error-message"><?=$_SESSION['register_result']?></p><?php
+if( isset($arResult) ) {
+    $class = $arResult['result'] ? 'login-success-message' : 'login-error-message' ;
+    ?><p class="<?=$class?>"><?=$arResult['message']?></p><?php
 }
+?>
+    <p><a hre="<?php echo PROJECT_PATH ?>/">на главную</a></p>
+<?php
 require( ROOT_PROJECT_PATH . '/design/footer.php');

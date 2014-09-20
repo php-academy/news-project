@@ -156,19 +156,19 @@ class Auth {
             $st1->bindParam(':salt', $salt);
             $st1->bindParam(':role', $role);
 
-            $userId = $connection->lastInsertId();
-
-            $st2 = $connection->prepare("INSERT INTO user_profile (userId, name, age, avatar) values(:userId,:name,:age,:avatar)");
-            $st2->bindParam(':userId', $userId);
-            $st2->bindParam(':name', $name);
-            $st2->bindParam(':age', $age);
-            $st2->bindParam(':avatar', $avatar);
-            if( $st1->execute() && $st2->execute() ){
-                $connection->commit();
-                return true;
-            } else {
-                throw new Exception('Сохранить пользователя не удалось!');
+            if( $st1->execute() ) {
+                $userId = $connection->lastInsertId();
+                $st2 = $connection->prepare("INSERT INTO user_profile (userId, name, age, avatar) values(:userId,:name,:age,:avatar)");
+                $st2->bindParam(':userId', $userId);
+                $st2->bindParam(':name', $name);
+                $st2->bindParam(':age', $age);
+                $st2->bindParam(':avatar', $avatar);
+                if( $st2->execute() ){
+                    $connection->commit();
+                    return true;
+                }
             }
+            throw new Exception('Сохранить пользователя не удалось!');        
             
         } catch( Exception $e ){
             $connection->rollBack();
