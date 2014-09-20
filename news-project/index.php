@@ -5,16 +5,11 @@
 <?php
     $news_per_page = 6;
     $count_news = count($news);
-    if(isset($_GET['page'])) {
-        $page = abs(intval($_GET['page']));
+    if( ($page-1)* $news_per_page >= $count_news ) {
+        header("Location: " . PROJECT_PATH . "/404.php");
     } else {
-        $page = 1;
-    }
-    if(($page-1)*$news_per_page >= $count_news ) {
-        echo "Страница не найдена";
-    } else {
-        $news = array_slice($news, ($page-1)*$news_per_page, $news_per_page);
-        foreach($news as $id => $news_element) {
+        $news = array_slice($news, ($page-1)* $news_per_page, $news_per_page);
+        foreach( $news as $id => $news_element ) {
             NewsItemWriter::writeShortNews($news_element, $id);
         }
     }
