@@ -18,8 +18,12 @@ class User
     }
 }
 
+
+
+
 class Auth {
     protected $users;
+
     
     public function __construct( $users ) {
         $this->users = $users;
@@ -196,4 +200,44 @@ class Auth {
        }
        return false;
    }
+}
+
+class BD{
+    
+    const HOST="127.0.0.1";
+    const USER="root";
+    const PASSWORD="";
+    const DRIVER="mysql";
+    const DBNAME="student03"; 
+    
+    protected $_db;
+    
+    public function __construct() {
+        
+        $dsn=self::DRIVER.":host=".self::HOST.";dbname=".self::DBNAME;
+        try{
+        $db=new PDO($dsn, self::USER, self::PASSWORD);
+        
+        } catch(PDOException $e){
+            throw new Exception('Cant connect to database');
+        }
+        
+        $this->_db=$db;
+    }
+     /**
+    * Выбор данных из таблицы
+    * @param string $table
+    * @return boolean | User
+    */
+    public function select($table,array $columns,array $params){
+      
+        
+    
+    }
+    
+    public function connection(){
+        
+        return $this->_db;
+        
+    }
 }
