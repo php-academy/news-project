@@ -51,6 +51,6 @@ if( isset($arResult) ) {
     ?><p class="<?=$class?>"><?=$arResult['message']?></p><?php
 }
 ?>
-    <p><a hre="<?php echo PROJECT_PATH ?>/">на главную</a></p>
+    <p><a href="<?php echo PROJECT_PATH ?>/">на главную</a></p>
 <?php
 require( ROOT_PROJECT_PATH . '/design/footer.php');
