@@ -35,9 +35,9 @@
                 } else {
                     ?>
                         <form action="<?=PROJECT_PATH?>/login.php" method="POST" >
-                            <input id='auth_login' type="text" name="login" >
-                            <input id='auth_password' type="password" name="password" >
-                            <input type="checkbox" name="rememberMe" >
+                            <p>Логин: </p><input id='auth_login' type="text" name="login" ><br>
+                            <p>Пароль: </p><input id='auth_password' type="password" name="password" ><br>
+                            <input type="checkbox" name="rememberMe" ><p>Запомнить меня</p><br>
                             <input type="submit" value="Вход" id="auth_button">
                         </form>
                 <?php } ?>
