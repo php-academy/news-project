@@ -61,6 +61,10 @@ a:hover {
     font-size: 12px;
 }
 .login-area {
-    margin-top: 20px;
+    margin-top: 18px;
     float: right;
+    display: block;
+    border: 1px solid black;
+    background-color: #bff1fd;
+    z-index: 100500;
 }
