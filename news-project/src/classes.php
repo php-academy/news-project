@@ -16,11 +16,11 @@ class DB {
         } catch (PDOException $e) {
             throw new Exception('Cannot connect to database');
         }
-        $this->_db = $db; 
+        $this->_connection = $db; 
     }
     
     public function connection() {
-        return $this->$connection;
+        return $this->$_connection;
     }
 }
 

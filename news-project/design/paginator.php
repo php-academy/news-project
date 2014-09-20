@@ -1,6 +1,6 @@
 <?php
 
-    if(isset($_GET['page'])) {
+    if(isset($_GET['page']) && (intval($_GET['page']) >= 1)) {
         $this_page = intval($_GET['page']);
     } else {
         $this_page = 1;
