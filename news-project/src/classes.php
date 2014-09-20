@@ -1,5 +1,29 @@
 <?php
 
+class DB {
+    const HOST = '127.0.0.1';
+    const USER = 'root';
+    const PASSWORD = '';
+    const DRIVER = 'mysql';
+    const DBNAME = 'student04';
+    
+    protected $_connection;
+    
+    public function __construct() {
+        $dsn = self::DRIVER . ":host=" . self::HOST . ";dbname=" . self::DBNAME;
+        try {
+            $db = new PDO($dsn, self::USER, self::PASSWORD);
+        } catch (PDOException $e) {
+            throw new Exception('Cannot connect to database');
+        }
+        $this->_db = $db; 
+    }
+    
+    public function connection() {
+        return $this->$_connection;
+    }
+}
+
 class User 
 {
     public $userId;
@@ -9,20 +33,20 @@ class User
     
     protected $role;
     
-    public function __construct($userId, $login, $password, $salt, $role) {
-        $this->userId = $userId;
-        $this->login = $login;
-        $this->password = $password;
-        $this->salt = $salt;
-        $this->role = $role;      
+    public function __construct($userId = null, $login = null, $password = null, $salt = null, $role = null) {
+        if($userId){$this->userId = $userId;}
+        if($login){$this->login = $login;}
+        if($password){$this->password = $password;}
+        if($salt){$this->salt = $salt;}
+        if($role){$this->role = $role;}      
     }
 }
 
 class Auth {
-    protected $users;
+    protected $_db;
     
-    public function __construct( $users ) {
-        $this->users = $users;
+    public function __construct() {
+        $this->_db = new DB();
     }
     
     /**
@@ -30,8 +54,7 @@ class Auth {
      * @param string $login
      * @param string $password
      */
-    public function login( $login, $password)
-    {
+    public function login( $login, $password) {
         if( 
             $this->validateLogin($login) &&
             $this->validatePassword($password)
@@ -45,6 +68,7 @@ class Auth {
                     if( $rememberMe ) {                       
                         setcookie( "news_project_user", $this->generateUserCookie($user), time() + 60*60*24, '/' );                    
                     }
+                    return $user->userId;
                 } else {
                     $_SESSION['login_error_message'] = "Неверный пароль";
                 }                        
@@ -53,6 +77,102 @@ class Auth {
             }        
         } else {
             $_SESSION['login_error_message'] = "Логин или пароль неверного формата";
+        }
+        return false;
+    }
+    
+    /**
+     * 
+     * @param string $login
+     * @param string $password
+     * @param string $repeat
+     * @param string $name
+     * @param integer $age
+     * @param string $avatar
+     * @return string & boolean
+     */
+    public function register($login, $password, $repeat, $name = null, $age = null, $avatar = null) {
+        $result = array(
+            'result' => false,
+            'message' => 'Unknown error'
+        );
+        if($this->validateLogin($login)) {
+            if($this->validatePassword($password)) {
+                if($password == $repeat) {
+                    if(!$this->findUserByLogin($login)) {
+                        if(!is_null($name)) {
+                            $name = strip_tags($name);
+                            $name = htmlspecialchars($name);
+                        }
+                        if(!is_null($age)) {
+                            $age = intval($age);
+                        }
+                        if($age > 0) {
+                            $salt = md5(time() . "+" . rand());
+                            $cryptPassword = $this->cryptPassword($password, $salt);
+                            if($this->saveUser($login, $cryptPassword, $salt, $role, $name, $age, $avatar)) {
+                                $result['message'] = 'Новорожденным запрещена регистрация';
+                                $result['result'] = true;
+                            } else {
+                                $result['message'] = 'Не удалось сохранить нового пользователя';
+                            }
+                        } else {
+                            $result['message'] = 'Новорожденным запрещена регистрация';
+                        }
+                    } else {
+                        $result['message'] = 'Такой логин уже существует';
+                    }
+                } else {
+                    $result['message'] = 'Подтверждение пароля не совпало с паролем';
+                }
+            } else {
+                $result['message'] = 'Неверный формат пароля';
+            }
+        } else {
+            $result['message'] = 'Неверный формат логина';
+        }
+        return $result;
+    }
+    
+    /**
+     * Сохраняет пользователя в базу данных
+     * @param string $login
+     * @param string $password
+     * @param string $salt
+     * @param string $role
+     * @param string $name
+     * @param integer $age
+     * @param string $avatar
+     * @return boolean
+     */
+    protected function saveUser($login, $password, $salt, $role, $name = null, $age = null, $avatar = null) {
+        $connection = $this->_db->connection();
+        $connection->beginTransaction();
+        try {
+            $salt = md5(time() . "+" . rand());
+            $st = $connection->prepare("insert into users (login, role, password, salt) values(:login, :role, :password, :salt)");
+            $st1->bindParam(':login', $login);
+            $st1->bindParam(':role', $role);
+            $st1->bindParam(':password', $password);
+            $st1->bindParam(':salt', $salt);
+            if($st1->execute()) {
+                $userId = $connection->lastInsertId();
+                $st2 = $connection->prepare("insert into user_profile (login, password, salt, role) values(:userId, :name, :age, :avatar)");
+                $st2->bindParam(':userId', $userId);
+                $st2->bindParam(':name', $name);
+                $st2->bindParam(':age', $age);
+                $st2->bindParam(':avatar', $avatar);
+            
+                if($st2->execute()) {
+                    $connection->commit();
+                    return true;
+                }
+            } else {
+                throw new Exception('Сохранить пользователя не удалось!');
+            }
+        } catch (Exception $e) {
+            $connection->rollback;
+            return false;
         }
     }
     
@@ -94,8 +214,7 @@ class Auth {
      * Находит текущего авторизованного пользовотеля либо false
      * @return boolean | User
      */
-    public function getAuthorizedUser()
-    {
+    public function getAuthorizedUser() {
         if( $this->isUserAuthorized() ) {
             $user = $this->findUserById($_SESSION['userId']);
             return $user;
@@ -140,8 +259,7 @@ class Auth {
      * @param User $user
      * @return string
      */
-    protected function generateUserCookie( $user )
-    {        
+    protected function generateUserCookie( $user ) {        
         $string = $_SERVER["REMOTE_ADDR"] . "+" . date('Y-m-d') . "+" . $user->salt . "+" . $user->password;
         return $user->login . ":" . md5($string);
     }
@@ -153,31 +271,40 @@ class Auth {
      * @param User $user
      * @return boolean
      */
-    protected function checkPassword( $rawPassword, User $user )
-    {
-        if( md5( $rawPassword . $user->salt ) == $user->password ) {
+    protected function checkPassword( $rawPassword, User $user ) {
+        if($this->cryptPassword($rawPassword, $user->salt) == $user->password ) {
             return true;
         } else {
             return false;
         }
     }
-   
+    
+    /**
+     * Шифруем пароль с помощью md5 и соли
+     * @param string $raw
+     * @param string $salt
+     * @return string
+     */
+    protected function cryptPassword($raw, $salt) {
+        return md5($raw . $salt);
+    }
+    
     /**
     * Поиск пользователя по логину
     * @param string $login
     * @return boolean | User
     */
     protected function findUserByLogin($login){
-       foreach( $this->users as $user) {
-           /**
-            * @var User $user
-            */
-           if( $user->login == $login ){
-               return $user;
-           }
-       }
-       return false;
-   }
+        $st = $this->_db->connection()->prepare("select * from users where login=:login");
+        $st->bindParam(':login', $login);
+        $st->setFetchMode(PDO::FETCH_CLASS, 'User');
+        if($st->execute() && $row = $st->fetch()) {
+            return $user;                
+        } else {
+            return false;
+        }
+    }
+   
    
    
    /**
@@ -186,14 +313,13 @@ class Auth {
     * @return boolean | User
     */
     protected function findUserById($userId){
-       foreach( $this->users as $user) {
-           /**
-            * @var User $user
-            */
-           if( $user->userId == $userId ){
-               return $user;
-           }
-       }
-       return false;
-   }
+        $st = $this->_db->connection()->prepare("select * from users where userId=:userId");
+        $st->bindParam(':userId', $userId);
+        $st->setFetchMode(PDO::FETCH_CLASS, 'User');
+        if($st->execute() && $row = $st->fetch()) {
+            return $user;                
+        } else {
+            return false;
+        }
+    }
 }
