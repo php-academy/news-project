@@ -67,4 +67,7 @@ a:hover {
     border: 1px solid black;
     background-color: #dedede;
     z-index: 100500;
+    padding: 10px;
+    font-size: 12px;
+    font-weight: normal;
 }
