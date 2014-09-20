@@ -5,6 +5,7 @@
 <?php
     $page = (isset($_GET['page']) && intval($_GET['page'])) > 1 ? intval($_GET['page']) : 1;
     $news_per_page = 6;
+    $count_news = count($news);
     if(isset($_GET['page'])) {
         if(abs(intval($_GET['page'])) == 0) {
             header('Refresh: 0; url=' . PROJECT_PATH . '/?page=1');
