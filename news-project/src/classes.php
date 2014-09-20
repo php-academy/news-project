@@ -20,7 +20,7 @@ class DB {
     }
     
     public function connection() {
-        return $this->$_connection;
+        return $this->$connection;
     }
 }
 
@@ -345,7 +345,7 @@ class NewsItem {
 
 
 class NewsItemWriter {
-    public static function writeShortNews($news_element) {
+    public static function writeShortNews($news_element, $id) {
         echo "<div class='news'><p><i>" . my_format_date($news_element->publishDate) . "</i>&nbsp;&nbsp;&nbsp;<b>" . $news_element->title . "</b></p>";
         echo "<p>" . cut_text($news_element->text) . "</p>";
         echo "<p><a href='" . PROJECT_PATH . "/news?id=" . $id . "'>Подробно</a></p></div>";
