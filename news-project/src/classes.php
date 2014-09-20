@@ -343,12 +343,24 @@ class NewsItem {
 }
 
 class NewsItemWriter {
+    
+    /**
+     * Записывает укороченную новость, взятую
+     * из объекта NewsItem
+     * @param NewsItem $news_element
+     * @param integer $id
+     */
     public static function writeShortNews($news_element, $id) {
         echo "<div class='news'><p><i>" . my_format_date($news_element->publishDate) . "</i>&nbsp;&nbsp;&nbsp;<b>" . $news_element->title . "</b></p>";
         echo "<p>" . cut_text($news_element->text) . "</p>";
         echo "<p><a href='" . PROJECT_PATH . "/news?id=" . $id . "'>Подробно</a></p></div>";
     }
     
+    /**
+     * Показывает полный текст новости из
+     * объекта NewsItem на отдельной странице
+     * @param NewsItem $news_element
+     */
     public static function writeFullNew($news_element) {
         echo "<h1>" . $news_element->title . "</h1>";
         echo "<p>" . $news_element->text . "</p>";
