@@ -13,7 +13,7 @@ class User
     protected $role;
     
     public function __construct($userId=null, $login=null, $password=null, $salt=null, $role=null,$name=null,$age=null,$avatar=null) {
-        if(ifset($userId)){$this->userId = $userId;
+        if(isset($userId)){$this->userId = $userId;
         $this->login = $login;
         $this->password = $password;
         $this->salt = $salt;
