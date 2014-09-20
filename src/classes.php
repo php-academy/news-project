@@ -36,12 +36,12 @@ class User
     
     protected $role;
     
-    public function __construct($userId, $login, $password, $salt, $role) {
-        $this->userId = $userId;
-        $this->login = $login;
-        $this->password = $password;
-        $this->salt = $salt;
-        $this->role = $role;      
+    public function __construct($userId = null, $login = null, $password = null, $salt = null , $role = null) {
+        if($userId){$this->userId = $userId;}
+        if($login){$this->login = $login;}
+        if($password){$this->password = $password;}
+        if($salt){$this->salt = $salt;}
+        if($role){$this->role = $role;}      
     }
 }
 
