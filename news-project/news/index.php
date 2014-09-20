@@ -15,7 +15,7 @@
         <p><?=$news_element['publish_date'];?></p>
         <p><a href="<?=PROJECT_PATH ?>">к списку новостей</a></p>
         */
-        NewsItemWriter::writeFullNew($news);
+        NewsItemWriter::writeFullNew($news[$id]);
     } else {
         header("Location: ".PROJECT_PATH."/404.php");
     }

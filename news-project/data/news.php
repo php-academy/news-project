@@ -52,8 +52,8 @@ $news_data = array(
 );
 
 $cmp_date = function($news_element_1, $news_element_2){
-    $date_1 = $news_element_1->publish_date;
-    $date_2 = $news_element_2->publish_date;
+    $date_1 = $news_element_1->publishDate;
+    $date_2 = $news_element_2->publishDate;
     
     $timestamp_1 = strtotime($date_1);
     $timestamp_2 = strtotime($date_2);

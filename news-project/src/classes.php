@@ -353,13 +353,10 @@ class NewsItemWriter {
         }
     }
     
-    public static function writeFullNew($news) {
-        foreach($news as $id => $news_element) {
-            $news_element = $news[$id];
-            echo "<h1>" . $news_element->title . "</h1>";
-            echo "<p>" . $news_element->text . "</p>";
-            echo "<p>" . $news_element->publishDate . "</p>";
-            echo "<p><a href='" . PROJECT_PATH . "'>к списку новостей</a></p>";
-        }
+    public static function writeFullNew($news_element) {
+        echo "<h1>" . $news_element->title . "</h1>";
+        echo "<p>" . $news_element->text . "</p>";
+        echo "<p>" . $news_element->publishDate . "</p>";
+        echo "<p><a href='" . PROJECT_PATH . "'>к списку новостей</a></p>";
     }
 }
