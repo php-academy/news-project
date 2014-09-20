@@ -297,7 +297,7 @@ class Auth {
         $st = $this->_db->connection()->prepare("select * from users where login=:login");
         $st->bindParam(':login', $login);
         $st->setFetchMode(PDO::FETCH_CLASS, 'User');
-        if($st->execute() && $row = $st->fetch()) {
+        if($st->execute() && $user = $st->fetch()) {
             return $user;                
         } else {
             return false;
@@ -315,7 +315,7 @@ class Auth {
         $st = $this->_db->connection()->prepare("select * from users where userId=:userId");
         $st->bindParam(':userId', $userId);
         $st->setFetchMode(PDO::FETCH_CLASS, 'User');
-        if($st->execute() && $row = $st->fetch()) {
+        if($st->execute() && $user = $st->fetch()) {
             return $user;                
         } else {
             return false;
@@ -341,7 +341,6 @@ class NewsItem {
     }
     
 }
-
 
 
 class NewsItemWriter {
