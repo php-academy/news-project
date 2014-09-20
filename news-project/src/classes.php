@@ -345,17 +345,21 @@ class NewsItem {
 
 
 class NewsItemWriter {
-    public static function writeShortNews($news_element) {
-        echo "<div class='news'><p><i>" . my_format_date($news_element->publish_date) . "</i>&nbsp;&nbsp;&nbsp;<b>" . $news_element->title . "</b></p>";
-        echo "<p>" . cut_text($news_element->text) . "</p>";
-        echo "<p><a href='" . PROJECT_PATH . "/news?id=" . $id . "'>Подробно</a></p></div>";
+    public static function writeShortNews($news) {
+        foreach($news as $news_element) {
+            echo "<div class='news'><p><i>" . my_format_date($news_element->publishDate) . "</i>&nbsp;&nbsp;&nbsp;<b>" . $news_element->title . "</b></p>";
+            echo "<p>" . cut_text($news_element->text) . "</p>";
+            echo "<p><a href='" . PROJECT_PATH . "/news?id=" . $id . "'>Подробно</a></p></div>";
+        }
     }
     
-    public static function writeFullNew($id) {
-        $news_element = $news[$id];
-        echo "<h1>" . $news_element->title . "</h1>";
-        echo "<p>" . $news_element->text . "</p>";
-        echo "<p>" . $news_element->publish_date . "</p>";
-        echo "<p><a href='" . PROJECT_PATH . "'>к списку новостей</a></p>";
+    public static function writeFullNew($news) {
+        foreach($news as $news_element) {
+            $news_element = $news[$id];
+            echo "<h1>" . $news_element->title . "</h1>";
+            echo "<p>" . $news_element->text . "</p>";
+            echo "<p>" . $news_element->publishDate . "</p>";
+            echo "<p><a href='" . PROJECT_PATH . "'>к списку новостей</a></p>";
+        }
     }
 }
