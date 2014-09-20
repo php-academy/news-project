@@ -217,7 +217,7 @@ class Database {
             return self :: $link ;
         }
 
-        $ini = _BASE_DIR . "config.ini" ;
+        $ini = ROOT_PROJECT_PATH. "/src/config.ini" ;
         $parse = parse_ini_file ( $ini , true ) ;
 
         $driver = $parse [ "db_driver" ] ;
