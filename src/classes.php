@@ -1,4 +1,31 @@
 <?php
+class BD {
+    const HOST = '127.0.0.1';
+    const USER = 'root';
+    const PASSWORD = '';
+    const DRIVER = 'mysql';
+    const DBNAME = 'student01';
+    
+    protected $_connection;
+
+
+    public function __construct(){
+        $dsn = self::DRIVER . ":host=" . self::HOST . ";dbname=" . self::DBNAME;
+        try{
+            $db = new PDO($dsn, self::USER, self::PASSWORD);
+        } catch( PDOException $e ){
+            throw new Exception('Can`t connect to database');
+        }
+        $this->_connection = $db;
+    }
+    /**
+     * 
+     * @return PDO
+     */
+    public function connection(){
+        return $this->_connection;
+    }
+}
 
 class User 
 {
@@ -19,10 +46,16 @@ class User
 }
 
 class Auth {
-    protected $users;
     
-    public function __construct( $users ) {
-        $this->users = $users;
+    /**
+     *
+     * @var DB
+     */
+    protected $_db;
+
+
+    public function __construct() {
+        $this->_db = new DB();
     }
     
     /**
@@ -168,15 +201,18 @@ class Auth {
     * @return boolean | User
     */
     protected function findUserByLogin($login){
-       foreach( $this->users as $user) {
-           /**
+        
+       $st = $this->_db->connection()->prepare("SELECT * from users where login=:login");
+       $st->bindParam(':login', $login);
+       $st->setFetchMode(PDO::FETCH_CLASS, 'User');
+       if( $user = $st->fetch() ){
+            /**
             * @var User $user
             */
-           if( $user->login == $login ){
-               return $user;
-           }
+            return $user;        
+       } else {
+           return false;
        }
-       return false;
    }
    
    
@@ -186,14 +222,16 @@ class Auth {
     * @return boolean | User
     */
     protected function findUserById($userId){
-       foreach( $this->users as $user) {
-           /**
+       $st = $this->_db->connection()->prepare("SELECT * from users where userId=:userId");
+       $st->bindParam(':userId', $userId);
+       $st->setFetchMode(PDO::FETCH_CLASS, 'User');
+       if( $user = $st->fetch() ){
+            /**
             * @var User $user
             */
-           if( $user->userId == $userId ){
-               return $user;
-           }
+            return $user;        
+       } else {
+           return false;
        }
-       return false;
    }
 }
