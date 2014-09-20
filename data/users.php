@@ -22,7 +22,7 @@ $stmt -> execute ( ) ;
 
 
 
-$result = $sth->fetchAll(PDO::FETCH_CLASS, "User");
+$result = $stmt->fetchAll(PDO::FETCH_CLASS, "User");
 
 
 
