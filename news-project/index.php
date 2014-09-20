@@ -5,12 +5,21 @@
 <?php
     $page = (isset($_GET['page']) && intval($_GET['page'])) > 1 ? intval($_GET['page']) : 1;
     $news_per_page = 6;
+    if(isset($_GET['page'])) {
+        if(abs(intval($_GET['page'])) == 0) {
+            header('Refresh: 0; url=' . PROJECT_PATH . '/?page=1');
+        } else {
+            $page = abs(intval($_GET['page']));
+        }
+    } else {
+        $page = 1;
+    }
     if(($page-1)*$news_per_page >= $count_news ) {
-        header("Location: " . PROJECT_PATH . "/404.php");
+        echo "Страница не найдена";
     } else {
         $news = array_slice($news, ($page-1)*$news_per_page, $news_per_page);
         foreach($news as $id => $news_element) {
-            NewsItemWriter::writeShortNews($news_element, $id);
+            require(ROOT_PROJECT_PATH . '/design/news_element.php');
         }
     }
 ?>

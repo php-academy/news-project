@@ -20,7 +20,7 @@ class DB {
     }
     
     public function connection() {
-        return $this->$_connection;
+        return $this->_connection;
     }
 }
 
