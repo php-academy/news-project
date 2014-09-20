@@ -15,3 +15,5 @@ RewriteRule news_project/([2-9]+[0-9]*)([/]?)$ news_project/news/index.php?id=$1
 DirectoryIndex index.php
 
 ErrorDocument 404 /news_project/404.php
+
+AddDefaultCharset UTF-8
