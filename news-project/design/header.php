@@ -43,7 +43,7 @@
                 <?php } ?>
                 <?php
                 if( isset($_SESSION['login_error_message']) && trim($_SESSION['login_error_message']) ){
-                    ?><p class='login-error-message'><?=$_SESSION['login_error_message']?></p><?php
+                    ?><p class='error_message'><?=$_SESSION['login_error_message']?></p><?php
                     unset($_SESSION['login_error_message']);
                 }
                 ?>

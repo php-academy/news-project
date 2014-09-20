@@ -45,7 +45,7 @@ require(ROOT_PROJECT_PATH . '/design/header.php');
 
 <?php
 if( isset($arResult)) {
-    $class = $arResult['result'] ? 'login-success-message' : 'login-error-message';
+    $class = $arResult['result'] ? 'success_message' : 'error_message';
     ?><p class="<?=$class?>"><?=$arResult['message']?></p><?php
 }
 ?>
