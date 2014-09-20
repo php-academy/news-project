@@ -3,6 +3,7 @@
     require(ROOT_PROJECT_PATH . '/design/header.php');
 ?>    
 <?php
+    $page = (isset($_GET['page']) && intval($_GET['page'])) > 1 ? intval($_GET['page']) : 1;
     $news_per_page = 6;
     $count_news = count($news);
     if( ($page-1)* $news_per_page >= $count_news ) {
