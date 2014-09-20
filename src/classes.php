@@ -1,5 +1,5 @@
 <?php
-class BD {
+class DB {
     const HOST = '127.0.0.1';
     const USER = 'root';
     const PASSWORD = '';
@@ -205,7 +205,7 @@ class Auth {
        $st = $this->_db->connection()->prepare("SELECT * from users where login=:login");
        $st->bindParam(':login', $login);
        $st->setFetchMode(PDO::FETCH_CLASS, 'User');
-       if( $user = $st->fetch() ){
+       if( $st->execute() && ($user = $st->fetch()) ){
             /**
             * @var User $user
             */
@@ -225,7 +225,7 @@ class Auth {
        $st = $this->_db->connection()->prepare("SELECT * from users where userId=:userId");
        $st->bindParam(':userId', $userId);
        $st->setFetchMode(PDO::FETCH_CLASS, 'User');
-       if( $user = $st->fetch() ){
+       if( $st->execute() && ($user = $st->fetch()) ){
             /**
             * @var User $user
             */
