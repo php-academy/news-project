@@ -89,6 +89,89 @@ class Auth {
         }
     }
     
+    public function register( $login, $password, $repeat, $name = null, $age = null, $avatar = null){
+        $result = array(
+            'result' => false,
+            'message' => 'unknown error'
+        );
+        
+        if( $this->validateLogin($login) ){
+            if( $this->validatePassword($password) ){
+                if( $password == $repeat ) {
+                    if( !$this->findUserByLogin($login) ){
+                        if( !is_null( $name ) ){
+                            $name = strip_tags($name);
+                            $name = htmlspecialchars($name);
+                        }
+                        if( !is_null($age) ){
+                            $age = intval( $age );
+                        }
+                        if( $age > 0 ){
+                            $salt = md5( time() . "+" . rand() );
+                            if( $this->saveUser($login, $password, $salt, 'user', $name, $age, $avatar) ){
+                                $result['message'] = 'пользователь успешно зарегистрирован';
+                                $result['result'] = true;
+                            } else {
+                                $result['message'] = 'Не удалось сохранить нового пользователя';
+                            }                         
+                        } else {
+                            $result['message'] = 'Возраст должен быть > 0';
+                        }
+                    } else{
+                        $result['message'] = 'Пользователь с таким именени и паролем уже существует';
+                    }                  
+                } else {
+                    $result['message'] = 'Пароль и подтверждение пароля не совпали';
+                }
+            } else {
+                $result['message'] = 'Неверный формат пароля';
+            }
+        } else {
+            $result['message'] = 'Неверный формат логина';
+        }
+        
+        return $result;
+    }
+    
+    /**
+     * Сохраняем пользователя в базу данных
+     * @param string $login
+     * @param string $password
+     * @param string $salt
+     * @param string $role
+     * @param string $name
+     * @param integer $age
+     * @param string $avatar
+     * @return boolean
+     */
+    protected function saveUser( $login, $password, $salt, $role, $name, $age, $avatar ){
+        $connection = $this->_db->connection();
+        
+        $connection->beginTransaction();
+        try{
+            $st1 = $connection->prepare("INSERT INTO users (login, password, salt, role) values(:login,:password,:salt,:role)");
+            $st1->bindParam(':login', $login);
+            $st1->bindParam(':password', $password);
+            $st1->bindParam(':salt', $salt);
+            $st1->bindParam(':role', $role);
+
+            $userId = $connection->lastInsertId();
+
+            $st2 = $connection->prepare("INSERT INTO user_profile (userId, name, age, avatar) values(:userId,:name,:age,:avatar)");
+            $st2->bindParam(':user', $userId);
+            $st2->bindParam(':name', $name);
+            $st2->bindParam(':age', $age);
+            $st2->bindParam(':avatar', $avatar);
+            $connection->commit();
+            return true;
+            
+        } catch( Exception $e ){
+            $connection->rollBack();
+            return true;
+        }       
+    }
+
+
     /**
      * Авторизует пользователя на основе COOKIE
      */
