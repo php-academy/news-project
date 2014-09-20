@@ -24,8 +24,7 @@ class DB {
     }
 }
 
-class User 
-{
+class User {
     public $userId;
     public $login;
     public $password;
@@ -321,5 +320,42 @@ class Auth {
         } else {
             return false;
         }
+    }
+}
+
+class NewsItem {
+    public $publishDate;
+    public $title;
+    public $text;
+    
+    /**
+     * 
+     * @param string $publishDate
+     * @param string $title
+     * @param string $text
+     */
+    public function __construct($publishDate, $title, $text) {
+        $this->publishDate = $publishDate;
+        $this->title = $title;
+        $this->text = $text;
+    }
+    
+}
+
+
+
+class NewsItemWriter {
+    public static function writeShortNews($news_element) {
+        echo "<div class='news'><p><i>" . my_format_date($news_element->publish_date) . "</i>&nbsp;&nbsp;&nbsp;<b>" . $news_element->title . "</b></p>";
+        echo "<p>" . cut_text($news_element->text) . "</p>";
+        echo "<p><a href='" . PROJECT_PATH . "/news?id=" . $id . "'>Подробно</a></p></div>";
+    }
+    
+    public static function writeFullNew($id) {
+        $news_element = $news[$id];
+        echo "<h1>" . $news_element->title . "</h1>";
+        echo "<p>" . $news_element->text . "</p>";
+        echo "<p>" . $news_element->publish_date . "</p>";
+        echo "<p><a href='" . PROJECT_PATH . "'>к списку новостей</a></p>";
     }
 }
