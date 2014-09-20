@@ -75,9 +75,11 @@ class Auth {
             {
                 if( $this->checkPassword($password, $user)) {
                     $_SESSION['userId'] = $user->userId;
+                    
                     if( $rememberMe ) {                       
                         setcookie( "news_project_user", $this->generateUserCookie($user), time() + 60*60*24, '/' );                    
                     }
+                    return $user->userId;
                 } else {
                     $_SESSION['login_error_message'] = "Неверный пароль";
                 }                        
@@ -87,6 +89,7 @@ class Auth {
         } else {
             $_SESSION['login_error_message'] = "Логин или пароль неверного формата";
         }
+        return false;
     }
     
     public function register( $login, $password, $repeat, $name = null, $age = null, $avatar = null){

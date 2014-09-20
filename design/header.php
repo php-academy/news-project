@@ -9,10 +9,16 @@
         <script type="text/javascript">
             $( document ).ready(function() {
                 $("#auth_button").click(function(){
-                    alert("OK");
+                    $.post('/news_project/login.php',{
+                        login: $("#auth_login").val(),
+                        password: $("#auth_password").val(),
+                        rememberMe: true,
+                    }).done(function(data){
+                        alert(data);
+                    });
                     return false;                
                 });
-            }
+            });
         </script>
     </head>
     <body>
@@ -25,8 +31,8 @@
                 } else {
                     ?>
                         <form action="<?=PROJECT_PATH?>/login.php" method="POST" >
-                            <input type="text" name="login" >
-                            <input type="password" name="password" >
+                            <input id="auth_login" type="text" name="login" >
+                            <input id="auth_password" type="password" name="password" >
                             <input type="checkbox" name="rememberMe" >
                             <input type="submit" value="Вход" id="auth_button" >
                         </form>

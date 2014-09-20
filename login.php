@@ -6,8 +6,11 @@ if(
     isset($_POST['password']) 
 )
 {
-    $auth->login($_POST['login'], $_POST['password']);
-    header('Location: ' . (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : PROJECT_PATH)  );
-} else {
-    header('Location: ' . PROJECT_PATH );
-}
+    $result = $auth->login($_POST['login'], $_POST['password']);
+    if( $result !== false ){
+        echo "SUCCES";
+        return;
+    }
+} 
+echo "FAIL";
+return;
