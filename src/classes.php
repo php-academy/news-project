@@ -6,15 +6,22 @@ class User
     public $login;
     public $password;
     public $salt;
+    public $name;
+    public $age;
+    public $avatar;
     
     protected $role;
     
-    public function __construct($userId, $login, $password, $salt, $role) {
+    public function __construct($userId, $login, $password, $salt, $role,$name,$age,$avatar) {
         $this->userId = $userId;
         $this->login = $login;
         $this->password = $password;
         $this->salt = $salt;
         $this->role = $role;      
+        
+        $this->name = $name;
+        $this->age = $age;
+        $this->avatar = $avatar;
     }
 }
 
@@ -202,42 +209,40 @@ class Auth {
    }
 }
 
-class BD{
-    
-    const HOST="127.0.0.1";
-    const USER="root";
-    const PASSWORD="";
-    const DRIVER="mysql";
-    const DBNAME="student03"; 
-    
-    protected $_db;
-    
-    public function __construct() {
-        
-        $dsn=self::DRIVER.":host=".self::HOST.";dbname=".self::DBNAME;
-        try{
-        $db=new PDO($dsn, self::USER, self::PASSWORD);
-        
-        } catch(PDOException $e){
-            throw new Exception('Cant connect to database');
+class Database {
+    private static $link = null ;
+
+    private static function getLink ( ) {
+        if ( self :: $link ) {
+            return self :: $link ;
         }
-        
-        $this->_db=$db;
+
+        $ini = _BASE_DIR . "config.ini" ;
+        $parse = parse_ini_file ( $ini , true ) ;
+
+        $driver = $parse [ "db_driver" ] ;
+        $dsn = "${driver}:" ;
+        $user = $parse [ "db_user" ] ;
+        $password = $parse [ "db_password" ] ;
+        $options = $parse [ "db_options" ] ;
+        $attributes = $parse [ "db_attributes" ] ;
+
+        foreach ( $parse [ "dsn" ] as $k => $v ) {
+            $dsn .= "${k}=${v};" ;
+        }
+
+        self :: $link = new PDO ( $dsn, $user, $password, $options ) ;
+
+        foreach ( $attributes as $k => $v ) {
+            self :: $link -> setAttribute ( constant ( "PDO::{$k}" )
+                , constant ( "PDO::{$v}" ) ) ;
+        }
+
+        return self :: $link ;
     }
-     /**
-    * Выбор данных из таблицы
-    * @param string $table
-    * @return boolean | User
-    */
-    public function select($table,array $columns,array $params){
-      
-        
-    
+
+    public static function __callStatic ( $name, $args ) {
+        $callback = array ( self :: getLink ( ), $name ) ;
+        return call_user_func_array ( $callback , $args ) ;
     }
-    
-    public function connection(){
-        
-        return $this->_db;
-        
-    }
-}
+} 
