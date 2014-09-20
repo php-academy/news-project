@@ -12,8 +12,8 @@ class User
     
     protected $role;
     
-    public function __construct($userId, $login, $password, $salt, $role,$name,$age,$avatar) {
-        $this->userId = $userId;
+    public function __construct($userId=null, $login=null, $password=null, $salt=null, $role=null,$name=null,$age=null,$avatar=null) {
+        if(ifset($userId)){$this->userId = $userId;
         $this->login = $login;
         $this->password = $password;
         $this->salt = $salt;
@@ -22,6 +22,7 @@ class User
         $this->name = $name;
         $this->age = $age;
         $this->avatar = $avatar;
+        }
     }
 }
 
@@ -36,7 +37,75 @@ class Auth {
         $this->users = $users;
     }
     
-    /**
+    public function registr($login,$password,$repeat,$name,$age){
+        
+        $result=array (
+            'result'=>false,
+            'message'=>'Неизвестнаяошибка!'
+            
+        );
+        
+        if ($this->validateLogin($login)){
+            
+            if($this->validatePassword($password)){
+                
+                if ($password=$repeat){
+                    
+                    if($this->findUserByLogin($login)){
+                        
+                        
+                        $name=  strip_tags($name);
+                        $name=  htmlspecialchars($name);
+                        $age=intval($age);
+                        
+                        if(!is_null($name) && $age>0){
+                            
+                         if (  $this->saveUser($login, $password, $repeat, $name, $age, $avatar)){
+                             
+                          $result['message']="Пользователь успешно зарегистрирован!";   
+                          return true;
+                         
+                         }
+                            
+                        } $result['message']="Возраст должен быть больше 0!";
+                    } $result['message']="Пользователь с таким логином уже существует!";
+                    
+                } else $result['message']="Пароль проверки не совпадает с паролем!";
+            } else $result['message']="Не верный формат поля!";
+        } else $result['message']="Не верный формат поля!";
+        
+        return $result;
+    }
+    
+    protected function saveUser($login,$password,$repeat,$name,$age,$avatar){
+        
+        $salt=md5(time()."+".rand());
+        
+        try{
+        
+        $stmt = Database :: prepare ( "insert into users values(null,:login,:password,:salt)" ) ;
+        
+        $stmt -> execute (array( ':login' => $login, ':password' => md5($password),':salt'=>$salt )  ) ;
+        
+        $id= $stmt::lastInsertID;
+ 
+        
+        $stmt -> closeCursor ( ) ;
+        
+           $stmt = Database :: prepare ( "insert into user_profile values(:id,:name,:age,:avatar)" ) ;
+        
+        $stmt -> execute (array( ':id' => $id, ':name' => $name,':age'=>$age,':avatar'=>$avatar)  ) ;
+        
+        $stmt -> closeCursor ( ) ;
+        } catch( Exception $e ){
+            
+            return false;
+        }
+        
+        return true;
+    }
+
+        /**
      * Авторизует пользовотеля по паре login/password
      * @param string $login
      * @param string $password
