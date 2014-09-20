@@ -18,7 +18,7 @@
         echo "Страница не найдена";
     } else {
         $news = array_slice($news, ($page-1)*$news_per_page, $news_per_page);
-        foreach($news as $news_element) {
+        foreach($news as $id => $news_element) {
             NewsItemWriter::writeShortNews($news_element);
         }
     }
