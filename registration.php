@@ -27,6 +27,7 @@ if( isset($_POST['login']) && isset($_POST['password']) && isset($_POST['repeat'
         $_SESSION['register_result'] = $arResult['message'];
     }
 }
+require(ROOT_PROJECT_PATH . '/design/header.php');
 ?>
 <h1>Регистрация</h1>
 <form method="POST" action="registration.php" >
@@ -45,9 +46,13 @@ if( isset($_POST['login']) && isset($_POST['password']) && isset($_POST['repeat'
     <p>
        Возраст: <input type="text" name="age" />    
     </p>
+    <p>
+        Возраст: <input type="submit" name="register" value="Зарегистрировать" />    
+    </p>
 </form>
 
 <?php
 if( isset($_SESSION['register_result'])  && !empty($_SESSION['register_result']) ){
     ?><p class="login-error-message"><?=$_SESSION['register_result']?></p><?php
 }
+require( ROOT_PROJECT_PATH . '/design/footer.php');

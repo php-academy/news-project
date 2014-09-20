@@ -162,6 +162,8 @@ class Auth {
             $st2->bindParam(':name', $name);
             $st2->bindParam(':age', $age);
             $st2->bindParam(':avatar', $avatar);
+            $st1->execute();
+            $st2->execute();
             $connection->commit();
             return true;
             
