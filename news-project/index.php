@@ -6,11 +6,7 @@
     $news_per_page = 6;
     $count_news = count($news);
     if(isset($_GET['page'])) {
-        if(abs(intval($_GET['page'])) == 0) {
-            header('Refresh: 0; url=' . PROJECT_PATH . '/?page=0');
-        } else {
-            $page = abs(intval($_GET['page']));
-        }
+        $page = abs(intval($_GET['page']));
     } else {
         $page = 1;
     }
