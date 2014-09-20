@@ -108,7 +108,8 @@ class Auth {
                         }
                         if( $age > 0 ){
                             $salt = md5( time() . "+" . rand() );
-                            if( $this->saveUser($login, $password, $salt, 'user', $name, $age, $avatar) ){
+                            $cryptPassword = $this->cryptPassword($password, $salt);
+                            if( $this->saveUser($login, $cryptPassword, $salt, 'user', $name, $age, $avatar) ){
                                 $result['message'] = 'пользователь успешно зарегистрирован';
                                 $result['result'] = true;
                             } else {
@@ -158,18 +159,20 @@ class Auth {
             $userId = $connection->lastInsertId();
 
             $st2 = $connection->prepare("INSERT INTO user_profile (userId, name, age, avatar) values(:userId,:name,:age,:avatar)");
-            $st2->bindParam(':user', $userId);
+            $st2->bindParam(':userId', $userId);
             $st2->bindParam(':name', $name);
             $st2->bindParam(':age', $age);
             $st2->bindParam(':avatar', $avatar);
-            $st1->execute();
-            $st2->execute();
-            $connection->commit();
-            return true;
+            if( $st1->execute() && $st2->execute() ){
+                $connection->commit();
+                return true;
+            } else {
+                throw new Exception('Сохранить пользователя не удалось!');
+            }
             
         } catch( Exception $e ){
             $connection->rollBack();
-            return true;
+            return false;
         }       
     }
 
@@ -266,6 +269,16 @@ class Auth {
 
 
     /**
+     * Шифрует пароль
+     * @param string $rawPassword
+     * @param string $salt
+     * @return string
+     */
+    protected function cryptPassword( $rawPassword, $salt) {
+        return md5( $rawPassword . $salt);
+    }
+
+    /**
      * Проверяем корректность введенного пользователем пароля
      * @param string $rawPassword
      * @param User $user
@@ -273,7 +286,7 @@ class Auth {
      */
     protected function checkPassword( $rawPassword, User $user )
     {
-        if( md5( $rawPassword . $user->salt ) == $user->password ) {
+        if($this->cryptPassword($rawPassword, $user->salt) == $user->password ) {
             return true;
         } else {
             return false;
