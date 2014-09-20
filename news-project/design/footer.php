@@ -1,4 +1,4 @@
 </div>
-        <div class="footer"> &COPY; Php online <?=date('Y')?> </div>
+        <div class="footer"> &COPY; PHP Online <?=date('Y')?> </div>
     </body>
 </html>
