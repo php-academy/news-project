@@ -7,7 +7,7 @@
     $news_per_page = 6;
     $count_news = count($news);
     if(isset($_GET['page'])) {
-        if(abs(intval($_GET['page'])) == 0) {
+        if(intval($_GET['page']) == 0) {
             header('Refresh: 0; url=' . PROJECT_PATH . '/?page=1');
         } else {
             $page = abs(intval($_GET['page']));
@@ -18,7 +18,7 @@
     if(($page-1)*$news_per_page >= $count_news ) {
         echo "Страница не найдена";
     } else {
-        $news = array_slice($news, ($page-1)*$news_per_page, $news_per_page);
+        $news = array_slice($news, ($page-1)*$news_per_page, $news_per_page, true);
         foreach($news as $id => $news_element) {
             NewsItemWriter::writeShortNews($news_element, $id);
         }
