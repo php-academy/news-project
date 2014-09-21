@@ -57,21 +57,25 @@ class Auth {
     public function __construct() {
         $this->_db = new DB();
     }
-    
+
     /**
      * Авторизует пользовотеля по паре login/password
      * @param string $login
      * @param string $password
+     * @param boolean $rememberMe
+     * @return array
      */
-    public function login( $login, $password)
+    public function login($login, $password, $rememberMe)
     {
+        $result = array(
+            'result' => false,
+            'message' => 'Неизвестная ошибка',
+        );
         if( 
             $this->validateLogin($login) &&
             $this->validatePassword($password)
         ) {
-            $rememberMe = (isset($_POST['rememberMe']) && $_POST['rememberMe']) ? true : false;
-
-            if( $user = $this->findUserByLogin($login) ) 
+            if( $user = $this->findUserByLogin($login) )
             {
                 if( $this->checkPassword($password, $user)) {
                     $_SESSION['userId'] = $user->userId;
@@ -79,17 +83,19 @@ class Auth {
                     if( $rememberMe ) {                       
                         setcookie( "news_project_user", $this->generateUserCookie($user), time() + 60*60*24, '/' );                    
                     }
-                    return $user->userId;
+                    $result['result'] = true;
+                    $result['message'] = 'Вы успешно авторизованы';
+                    $result['data'] = array( 'login' => $user->login );
                 } else {
-                    $_SESSION['login_error_message'] = "Неверный пароль";
+                    $result['message'] =  "Неверный пароль";
                 }                        
             } else {
-                $_SESSION['login_error_message'] = "Неверный логин";
+                $result['message'] =  "Неверный логин";
             }        
         } else {
-            $_SESSION['login_error_message'] = "Логин или пароль неверного формата";
+            $result['message'] =  "Логин или пароль неверного формата";
         }
-        return false;
+        return $result;
     }
     
     public function register( $login, $password, $repeat, $name = null, $age = null, $avatar = null){

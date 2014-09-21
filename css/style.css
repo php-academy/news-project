@@ -1,6 +1,7 @@
-.header{ height: 50px; width: 100%; border-bottom: 2px solid #ccc; text-align: center; font-size:24px;}
+html,body{font-size: 14px;}
+.header{ height: 55px; width: 100%; border-bottom: 2px solid #ccc; }
+.title{font-size: 24px;}
 .footer{ height: 50px; width: 100%; border-top: 2px solid #ccc; text-align: center;}
-.login-area{ float: right; margin-top: -20px; }
-.login-line{ font-size: 16px; }
-.login-error-message{ color: red; font-size: 12px;}
-.login-success-message{ color: green; font-size: 12px;}
+.auth-area{ float: right;}
+.error{color: red;}
+.reg_link{float: right;}
