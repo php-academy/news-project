@@ -45,6 +45,75 @@ class User
     }
 }
 
+class NewsItem{
+    public $newsId;
+    public $publish_date;
+    public $title;
+    public $text;
+
+    function __construct($newsId = null, $publish_date = null , $text = null , $title = null )
+    {
+        $this->newsId = $newsId;
+        $this->publish_date = $publish_date;
+        $this->text = $text;
+        $this->title = $title;
+    }
+
+}
+
+class NewsWriter{
+    const DEFAULT_CUT_LENGTH=100;
+    const DEFAULT_DATE_FORMAT = 'H:i:s d.m.Y';
+
+    /**
+     * Выдает первые 2 предложения
+     * или обрезает строку до 300 символов
+     * @param string $text
+     * @param integer $cut_length
+     * @return string
+     */
+    public function cut_text($text, $cut_length = self::DEFAULT_CUT_LENGTH) {
+        $arText = explode('.', $text, 3);
+        $str = $arText[0];
+        if(isset($arText[1])) {
+            $str .= '. ' . $arText[1] . '.';
+        }
+
+        if( strlen($str) < $cut_length ){
+            return $str;
+        } else {
+            return substr($str, 0, $cut_length) . ' ...';
+        }
+    }
+
+    /**
+     * Форматирует дату в требуемый формат
+     * @param string $date
+     * @param string $format
+     * @return string
+     */
+    public function format_date( $date, $format = self::DEFAULT_DATE_FORMAT){
+        $timestamp = strtotime($date);
+        $formatedDate = date($format, $timestamp);
+        return $formatedDate;
+    }
+
+    public function shortNewsText(NewsItem $item) {
+        ?>
+        <p><i><?=  $this->format_date($item->publish_date)?></i>&nbsp;&nbsp;&nbsp;<b><?=$item->title?></b></p>
+        <p><?=$this->cut_text($item->text)?></p>
+        <?php
+    }
+
+    public function fullNewsText(NewsItem $item) {
+        ?>
+        <h1><?=$item->title?></h1>
+        <p><?=$item->text?></p>
+        <p><?=$this->format_date($item->publish_date);?></p>
+        <?php
+    }
+}
+
 class Auth {
     
     /**

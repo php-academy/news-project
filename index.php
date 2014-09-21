@@ -9,8 +9,11 @@ if( ($page-1)*NEWS_ITEMS_ON_PAGE >= $count_news ) {
     header("Location: " . PROJECT_PATH . "/404.php");
 } else {
     $news = array_slice($news, ($page-1)*NEWS_ITEMS_ON_PAGE, NEWS_ITEMS_ON_PAGE);
-    foreach( $news as $id => $news_element ) {
-        require( ROOT_PROJECT_PATH . '/design/news_element.php');
+    $writer = new NewsWriter();
+    foreach( $news as $news_element ) {
+        $writer->shortNewsText($news_element);
+        ?><p><a href="<?=PROJECT_PATH?>/news/?id=<?=$news_elemnt->newsId?>">подробнее</a></p>
+        <hr><?php
     }
 }
 ?>

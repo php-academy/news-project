@@ -9,12 +9,10 @@ if(
     isset($news[$id])
 ){
     $news_element = $news[$id];
+    $writer = new NewsWriter();
+    $writer->fullNewsText($news_element);
     ?>
-    <h1><?=$news_element['title']?></h1>
-    <p><?=$news_element['text']?></p>
-    <p><?=$news_element['publish_date'];?></p>
     <p><a href="<?=PROJECT_PATH ?>">к списку новостей</a></p>
-    
     <?php
 } else {
     header("Location: ".PROJECT_PATH."/404.php");

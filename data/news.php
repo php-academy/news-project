@@ -86,4 +86,10 @@ $cmp_date = function($news_element_1, $news_element_2){
     }    
 };
 uasort($news_data, $cmp_date);
-return $news_data;
+
+$data = array();
+foreach ($news_data as $newsId => $arNewsItem) {
+    $data[] = new NewsItem($newsId, $arNewsItem['publish_date'], $arNewsItem['title'], $arNewsItem['text']);
+}
+
+return $data;
