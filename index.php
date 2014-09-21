@@ -12,7 +12,7 @@ if( ($page-1)*NEWS_ITEMS_ON_PAGE >= $count_news ) {
     $writer = new NewsWriter();
     foreach( $news as $news_element ) {
         $writer->shortNewsText($news_element);
-        ?><p><a href="<?=PROJECT_PATH?>/news/?id=<?=$news_elemnt->newsId?>">подробнее</a></p>
+        ?><p><a href="<?=PROJECT_PATH?>/news/?id=<?=$news_element->newsId?>">подробнее</a></p>
         <hr><?php
     }
 }
