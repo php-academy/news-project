@@ -21,6 +21,7 @@
                             <input type="checkbox" name="rememberMe" >
                             <input type="submit" value="Вход">
                         </form>
+                    <a href="<?=PROJECT_PATH?>/registration.php">Зарегистрироваться</a>
                 <?php } ?>
                 <?php
                 if( isset($_SESSION['login_error_message']) && trim($_SESSION['login_error_message']) ){

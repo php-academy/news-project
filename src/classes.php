@@ -6,16 +6,79 @@ class User {
     public $login;
     public $password;
     public $salt;
+   
     protected $role;
-
-    public function __construct($userId, $login, $password, $salt, $role) {
-        $this->userId = $userId;
-        $this->login = $login;
-        $this->password = $password;
-        $this->salt = $salt;
-        $this->role = $role;
+    
+   
+    public function __construct($userId = null, $login = null, $password = null, $salt = null, $role = null) {
+       
+        if($userId)$this->userId = $userId;
+        if($login)$this->login = $login;
+        if($password)$this->password = $password;
+        if($salt)$this->salt = $salt;
+        if($role)$this->role = $role;
     }
 
+}
+
+class DB {
+    const HOST = '127.0.0.1';
+    const USER = 'root';
+    const PASSWORD = '';
+    const DRIVER = 'mysql';
+    const DBNAME = 'student07';
+    
+    protected $_db;
+
+
+    public function __construct(){
+        $dsn = self::DRIVER.":host=".self::HOST . ";dbname=". self::DBNAME;
+        
+        try{
+            $db = new PDO($dsn, self::USER, self::PASSWORD);
+        } catch (PDOException $ex) {
+            throw new Exception("Can't connect");
+        }
+        $this->_db = $db;
+    }
+    /**
+     * Недоделланое гибкое решение
+     * @param srring $table
+     * @param array $columns
+     * @param array $params
+     */
+    /*public function select($table, array $columns, array $params) {
+        $query = "SELECT * ";
+        if($columns)
+             $query .= implode(',', $columns); 
+        else
+            {
+          $query .= "*";    
+        }
+        $query .= " from". $table;
+        /**
+         * array (
+         *   'userId' => 123,
+         *   'login' => 'user1'
+         * )
+         * where userId = 123 and login = 'user1'
+         
+        if($params)
+            $query .= "";
+        foreach ($params as $key => $value){
+            $where = $key . "=" . $value;
+            $where .= " and";
+        }
+        */
+       
+        /**
+        * Соединение
+        * @return object PDO
+        */
+       public function connection(){
+           return $this->_db;
+       }
+    
 }
 
 class NewsItem {
@@ -36,61 +99,62 @@ class NewsItem {
 
 class NewsItemWriter {
 
-    public $news;
+    protected $news;
     
     public function __construct($news) {
         $this->news = $news;
     }
     
-    /**
-     * Выводит новость в кратком виде
-     * @param NewsItem $new
-     */
-    public function writeShotNewsItem($new) {
-        require( ROOT_PROJECT_PATH . '/design/news_element.php');
-    }
     
     /**
      * Выводит новость целиком на страницу
      * @param NewsItem $new
+     * @return array $newItem
      */
-    public function writeFullNewsItem($new) {
-        if(!$_GET['id'])  header("Location: " . PROJECT_PATH . "/404.php");
-        require( ROOT_PROJECT_PATH . '/news/index.php');
+    public function writeFullNewsItem($id)
+    {
+        $new = $this->news[$id]; 
+        
+        $newItem['title'] = $new->title;
+        $newItem['text'] = $new->text;
+        $newItem['publish_date'] = $new->publish_date;
+        
+                return $newItem;
+      
+    }
+    /**
+     * Выводит новость в кратком виде
+     * @param NewsItem $new
+     * @return array $newItem
+     */
+    public function writeShotNewsItem($page) 
+    {
+        
+        $arNewsOnPage = array_slice($this->news, ($page - 1) * NEWS_ITEMS_ON_PAGE, NEWS_ITEMS_ON_PAGE);
+            foreach ($arNewsOnPage as $id => $new) {
+                $newsItems[$id] = $new; 
+            }
+            return $newsItems;
     }
     
     /**
-     * Осуществляет разбивку списка новостей на страницы
-     * 
+     * Считает новости
+     * @return interger
      */
-    public function paginator() {
-        $page = ((isset($_GET['page']) && intval($_GET['page']) > 1)  ? intval($_GET['page']) : 1);
-        $count_news = count($this->news);
-        if (($page - 1) * NEWS_ITEMS_ON_PAGE >= $count_news) {
-            header("Location: " . PROJECT_PATH . "/404.php");
-        } else {
-            $arNewsOnPage = array_slice($this->news, ($page - 1) * NEWS_ITEMS_ON_PAGE, NEWS_ITEMS_ON_PAGE);
-            foreach ($arNewsOnPage as $id => $new) {
-                $this->writeShotNewsItem($new); 
-               
-            }
-        }
-        
-        $count_pages = ($count_news / NEWS_ITEMS_ON_PAGE) + 1;
-            for($i=1; $i < $count_pages; $i++) {
-                 require( ROOT_PROJECT_PATH . '/design/pagination.php');
-
-                }
+    public function countNewsItem()
+    {
+        $count = count($this->news);
+        return $count;
     }
 
 }
 
 class Auth {
 
-    protected $users;
+    protected $_db;
 
-    public function __construct($users) {
-        $this->users = $users;
+    public function __construct() {
+       $this->_db = new DB();
     }
 
     /**
@@ -170,6 +234,131 @@ class Auth {
         unset($_SESSION['userId']);
         setcookie('news_project_user', '', time() - 100, '/');
     }
+    
+    /**
+     * Регистрация пользователя
+     * @param type $login
+     * @param type $password
+     * @param type $repeat
+     * @param type $name
+     * @param type $age
+     * @param type $avatar
+     * @return string
+     */
+    public function register($login, $password, $repeat, $name = null, $age = null, $avatar = null) {
+        $result = array (
+            'result' => false,
+            'message' => 'unknown error'
+        );
+        
+        if($this->validateLogin($login))
+            { 
+            
+            if($this->validatePassword($password)) 
+                {
+                
+                if ($password == $repeat) 
+                    {
+                   
+                    if(!$this->findUserByLogin($login))
+                        {
+                      
+                        if(!is_null( $name))
+                            {
+                            $name = strip_tags($name);
+                            $name = htmlspecialchars($name);
+                            }
+                            if(!is_null($age)) 
+                                $age = intval($age);
+                            if($age>0) 
+                                {
+                                $salt = md5(time() . "+" . rand()); //случайно генерируем соль
+                                $cryptPassword = $this->cryptPassword($password, $salt);
+                                
+                                if($this->saveUser($login, $password, $salt, 'user', $name, $age, $avatar)) 
+                                    $result['message'] = 'Пользователь успешно зарегистрирован';
+                                    $result['result'] = true;
+                                
+                                }
+                            else {
+                                $result['message'] = 'Мал возраст';
+                            }
+                        }
+                        else {$result['message'] = 'Пользователь уже существует';
+                        
+                        }
+                    }
+                    else {
+                        $result['message'] = 'Пароль и подтверждение не совпали';
+                    }
+                }
+            
+                else {
+                $result['message'] = 'Неверный формат пароля';
+            }
+       
+        }
+        else {
+            $result['message'] = 'Неверный пароль пользователя';
+        }
+        
+        return $result;
+    }
+    
+    /**
+     * Сохраняем пользователя в БД
+     * @param string $login
+     * @param string $password
+     * @param string $salt
+     * @param string $role
+     * @param string $name
+     * @param integer $age
+     * @param string $avatar
+     * @return boolean
+     */
+    protected function saveUser($login, $password, $salt, $role, $name, $age, $avatar){
+       
+        $connection = $this->_db->connection();
+        
+        $connection->beginTransaction();
+       
+        try
+        {
+            $st1 = $connection->prepare("INSERT INTO users (login, password, salt, role) value (:login,:password,:salt,:role)");
+           
+            $st1->bindParam(':login', $login);
+            $st1->bindParam(':password', $password);
+            $st1->bindParam(':salt', $salt);
+            $st1->bindParam(':role', $role);
+            
+           
+            if($st1->execute()) {
+                $userId = $connection->lastInsertId();
+                
+                $st2 = $connection->prepare("INSERT INTO user_profile (userId, name, age, avatar) value (:userId,:name,:age,:avatar)");
+                $st2->bindParam(':userId', $userId);
+                $st2->bindParam(':name', $name);
+                $st2->bindParam(':age', $age);
+                $st2->bindParam(':avatar', $avatar);
+       
+                if($st2->execute()) {
+                    $connection->commit();
+                    return true;
+                }
+            }
+            
+            throw new Exception ('Сохранить пользователя не удалось'); 
+        
+        }
+            catch(Exception $e){
+            $connection->rollBack();
+            echo "Ошибка:  "   .  $e->getMessage();
+            
+            return false;
+     
+        }
+   
+    }
 
     /**
      * Проверяет корректность логина
@@ -206,7 +395,16 @@ class Auth {
         $string = $_SERVER["REMOTE_ADDR"] . "+" . date('Y-m-d') . "+" . $user->salt . "+" . $user->password;
         return $user->login . ":" . md5($string);
     }
-
+    
+    /**
+     * Шифрование пароля
+     * @param string $rawPassword
+     * @param string $salt
+     * @return type
+     */
+    protected function cryptPassword ($rawPassword, $salt) {
+        return md5($rawPassword . $salt);
+    }
     /**
      * Проверяем корректность введенного пользователем пароля
      * @param string $rawPassword
@@ -227,15 +425,19 @@ class Auth {
      * @return boolean | User
      */
     protected function findUserByLogin($login) {
-        foreach ($this->users as $user) {
-            /**
-             * @var User $user
-             */
-            if ($user->login == $login) {
-                return $user;
+        $st = $this->_db->connection()->prepare("SELECT * from users where login=:login"); 
+        
+        $st->bindParam(':login', $login);
+        $st->setFetchMode(PDO::FETCH_CLASS, 'User');
+        $st->execute();
+        if($st->execute() && ($user = $st->fetch())) {
+             return $user;
             }
-        }
+        
+        else 
+        {
         return false;
+        }
     }
 
     /**
@@ -244,15 +446,20 @@ class Auth {
      * @return boolean | User
      */
     protected function findUserById($userId) {
-        foreach ($this->users as $user) {
-            /**
-             * @var User $user
-             */
-            if ($user->userId == $userId) {
+      $st = $this->_db->connection()->prepare("SELECT * from users where userId=:userid"); 
+        
+        $st->bindParam(':userid', $login);
+        $st->setFetchMode(PDO::FETCH_CLASS, 'User');
+        $st->execute();
+        if($st->execute() && ($user = $st->fetch())) {
+           
                 return $user;
             }
-        }
+        
+        else 
+        {
         return false;
+        }
     }
 
 }
