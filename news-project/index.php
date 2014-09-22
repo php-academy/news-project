@@ -20,7 +20,7 @@
     } else {
         $news = array_slice($news, ($page-1)*$news_per_page, $news_per_page, true);
         foreach($news as $id => $news_element) {
-            NewsItemWriter::writeShortNews($news_element, $id);
+            NewsItemWriter::writeShortNews($news_element);
         }
     }
 ?>
