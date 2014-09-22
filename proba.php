@@ -112,17 +112,19 @@ class NewsItem{
 	public function addNews (NewsItem $News){
 	$this->News[] = $new;
 	}
-	public function getNewsInfo() {
+	
+	public function getNewsInfo($new) {
         return 
-		"<h1>{$this->text}</h1>"
-        "{$this->publish_date}<br>".
-        "{$this->title}<br>";
+		$this->text;
+        $this->publish_date;
+        $this->title;
     }
-	public function fullWriter ()
+	public function fullWriter(){
 	foreach ( $this->News as $new ){
-            echo $new->getNewsInfoInfo();
+            echo $new->getNewsInfo();
             echo "===============================<br>";
         }
 	}
-	
 }
+$news_element = new NewsItemWriter();
+$news_element->fullWriter($news_element);
