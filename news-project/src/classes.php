@@ -355,8 +355,8 @@ class NewsItemWriter {
      * @param integer $id
      */
     public static function writeShortNews($news_element) {
-        echo "<div class='news'><p><i>" . $this->my_format_date($news_element->publishDate) . "</i>&nbsp;&nbsp;&nbsp;<b>" . $news_element->title . "</b></p>";
-        echo "<p>" . $this->cut_text($news_element->text) . "</p>";
+        echo "<div class='news'><p><i>" . self::$news_element->publishDate . "</i>&nbsp;&nbsp;&nbsp;<b>" . $news_element->title . "</b></p>";
+        echo "<p>" . self::cut_text($news_element->text) . "</p>";
         echo "<p><a href='" . PROJECT_PATH . "/news?id=" . $news_element->newsId . "'>Подробно</a></p></div>";
     }
     
@@ -379,7 +379,7 @@ class NewsItemWriter {
     * @param integer $cut_length
     * @return string
     */
-    public function cut_text($text, $cut_length = self::DEFAULT_CUT_LENGTH) {
+    public static function cut_text($text, $cut_length = self::DEFAULT_CUT_LENGTH) {
         $arText = explode('.', $text, 3);
         $str = $arText[0];
         if(isset($arText[1])) {
@@ -399,7 +399,7 @@ class NewsItemWriter {
      * @param string $format
      * @return string
      */
-    public function my_format_date( $date, $format = self::DEFAULT_DATE_FORMAT){
+    public static function my_format_date( $date, $format = self::DEFAULT_DATE_FORMAT){
         $timestamp = strtotime($date);
         $formatedDate = date($format, $timestamp); 
         return $formatedDate;
