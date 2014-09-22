@@ -355,7 +355,7 @@ class NewsItemWriter {
      * @param integer $id
      */
     public static function writeShortNews($news_element) {
-        echo "<div class='news'><p><i>" . self::$news_element->publishDate . "</i>&nbsp;&nbsp;&nbsp;<b>" . $news_element->title . "</b></p>";
+        echo "<div class='news'><p><i>" . self::my_format_date($news_element->publishDate) . "</i>&nbsp;&nbsp;&nbsp;<b>" . $news_element->title . "</b></p>";
         echo "<p>" . self::cut_text($news_element->text) . "</p>";
         echo "<p><a href='" . PROJECT_PATH . "/news?id=" . $news_element->newsId . "'>Подробно</a></p></div>";
     }
