@@ -324,6 +324,7 @@ class Auth {
 }
 
 class NewsItem {
+    public $newsId;
     public $publishDate;
     public $title;
     public $text;
@@ -334,7 +335,8 @@ class NewsItem {
      * @param string $title
      * @param string $text
      */
-    public function __construct($publishDate, $title, $text) {
+    public function __construct($newsId, $publishDate, $title, $text) {
+        $this->newsId = $newsId;
         $this->publishDate = $publishDate;
         $this->title = $title;
         $this->text = $text;
@@ -343,17 +345,19 @@ class NewsItem {
 }
 
 class NewsItemWriter {
-    
+    const DEFAULT_CUT_LENGTH = 100;
+    const DEFAULT_DATE_FORMAT = 'H:i:s d.m.Y';
+
     /**
      * Записывает укороченную новость, взятую
      * из объекта NewsItem
      * @param NewsItem $news_element
      * @param integer $id
      */
-    public static function writeShortNews($news_element, $id) {
+    public static function writeShortNews($news_element) {
         echo "<div class='news'><p><i>" . my_format_date($news_element->publishDate) . "</i>&nbsp;&nbsp;&nbsp;<b>" . $news_element->title . "</b></p>";
         echo "<p>" . cut_text($news_element->text) . "</p>";
-        echo "<p><a href='" . PROJECT_PATH . "/news?id=" . $id . "'>Подробно</a></p></div>";
+        echo "<p><a href='" . PROJECT_PATH . "/news?id=" . $news_element->newsId . "'>Подробно</a></p></div>";
     }
     
     /**
@@ -366,5 +370,38 @@ class NewsItemWriter {
         echo "<p>" . $news_element->text . "</p>";
         echo "<p>" . $news_element->publishDate . "</p>";
         echo "<p><a href='" . PROJECT_PATH . "'>к списку новостей</a></p>";
+    }
+    
+    /**
+    * Выдает первые 2 предложения
+    * или обрезает строку до 300 символов
+    * @param string $text
+    * @param integer $cut_length
+    * @return string
+    */
+    public function cut_text($text, $cut_length = self::DEFAULT_CUT_LENGTH) {
+        $arText = explode('.', $text, 3);
+        $str = $arText[0];
+        if(isset($arText[1])) {
+            $str .= '. ' . $arText[1] . '.'; 
+        }
+
+        if( strlen($str) < $cut_length ){
+            return $str;
+        } else {
+            return substr($str, 0, $cut_length) . ' ...';
+        }
+    }
+
+    /**
+     * Форматирует дату в требуемый формат
+     * @param string $date
+     * @param string $format
+     * @return string
+     */
+    public function my_format_date( $date, $format = self::DEFAULT_DATE_FORMAT){
+        $timestamp = strtotime($date);
+        $formatedDate = date($format, $timestamp); 
+        return $formatedDate;
     }
 }
