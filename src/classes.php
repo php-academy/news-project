@@ -172,7 +172,7 @@ class Auth {
             isset($avatar['name'])
             
         ) {
-            $pathinfo = pathinfo($avatar);
+            $pathinfo = pathinfo($avatar['name']);
             $ext = $pathinfo['extension'] ? strtolower($pathinfo['extension']) : '';
             if( in_array($ext, array('gif', 'png', 'jpg', 'jpeg')) ) {
                 $avatarName = md5(time().$avatar['name']) . '.' . $ext;
@@ -202,10 +202,8 @@ class Auth {
                             $name = strip_tags($name);
                             $name = htmlspecialchars($name);
                         }
-                        if( !is_null($age) ){
-                            $age = intval( $age );
-                        }
-                        if( $age > 0 ){
+                        
+                        if( is_null($age) || intval($age) > 0 ){
                             $avatarUrl = null;
                             if( $avatar ) {
                                 if( !($avatarUrl = $this->saveAvatar($avatar)) )

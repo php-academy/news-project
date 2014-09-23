@@ -41,10 +41,10 @@ require(ROOT_PROJECT_PATH . '/design/header.php');
        Возраст: <input type="text" name="age" />    
     </p>
     <p>
-        Возраст: <input type="submit" name="register" value="Зарегистрировать" />    
+        Аватар: <input type="file" name="avatar" />  
     </p>
     <p>
-        Аватар: <input type="file" name="avatar" />  
+        <input type="submit" name="register" value="Зарегистрировать" />    
     </p>
 </form>
 
