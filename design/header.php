@@ -29,16 +29,7 @@
                         response = JSON.parse(response);
                         if( response && response.result ) {
                             $("#auth_area").html(
-                                    "<div id=\"auth_form\">
-                                        <form action=\"<?=PROJECT_PATH?>/login.php\" method=\"POST\" >
-                                        <input id=\"auth_login\" type=\"text\" name=\"login\" >
-                                        <input id=\"auth_password\" type=\"password\" name=\"password\" >
-                                        <input id=\"auth_remember\" type=\"checkbox\" name=\"rememberMe\" >
-                                        <input type=\"submit\" value=\"вход\" id=\"auth_button\" >
-                                        </form>
-                                        <div class=\"reg_link\"><a  href=\"<?=PROJECT_PATH?>/registration.php\">зарегистрироваться</a></div>
-                                    </div>
-                                    <div id=\"auth_error\" class=\"error\"></div>"
+                                    "<div id='auth_form'><form action='<?=PROJECT_PATH?>/login.php' method='POST' ><input id='auth_login' type='text' name='login' ><input id='auth_password' type='password' name='password' ><input id='auth_remember' type='checkbox' name='rememberMe' ><input type='submit' value='вход' id='auth_button' ></form><div class='reg_link'><a  href='<?=PROJECT_PATH?>/registration.php'>зарегистрироваться</a></div></div><div id='auth_error' class='error'></div>"
                             );
                         }
                     });
