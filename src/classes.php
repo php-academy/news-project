@@ -1,5 +1,33 @@
 <?php
 
+class DB {
+    const HOST = '127.0.0.1';
+    const USER = 'root';
+    const PASSWORD = '';
+    const DRIVER = 'mysql';
+    const DBNAME = 'student01';
+
+    protected $_connection;
+
+
+    public function __construct(){
+        $dsn = self::DRIVER . ":host=" . self::HOST . ";dbname=" . self::DBNAME;
+        try{
+            $db = new PDO($dsn, self::USER, self::PASSWORD);
+        } catch( PDOException $e ){
+            throw new Exception('Can`t connect to database');
+        }
+        $this->_connection = $db;
+    }
+    /**
+     *
+     * @return PDO
+     */
+    public function connection(){
+        return $this->_connection;
+    }
+}
+
 class User 
 {
     public $userId;
@@ -32,12 +60,59 @@ class User
 class Auth {
     protected $users;
 
-    
-    public function __construct( $users ) {
-        $this->users = $users;
+    protected $_db;
+
+
+    public function __construct() {
+        $this->_db = new DB();
     }
+
     
-    public function registr($login,$password,$repeat,$name,$age){
+    public function register( $login, $password, $repeat, $name = null, $age = null, $avatar = null){
+        $result = array(
+            'result' => false,
+            'message' => 'unknown error'
+        );
+
+        if( $this->validateLogin($login) ){
+            if( $this->validatePassword($password) ){
+                if( $password == $repeat ) {
+                    if( !$this->findUserByLogin($login) ){
+                        if( !is_null( $name ) ){
+                            $name = strip_tags($name);
+                            $name = htmlspecialchars($name);
+                        }
+                        if( !is_null($age) ){
+                            $age = intval( $age );
+                        }
+                        if( $age > 0 ){
+                            $salt = md5( time() . "+" . rand() );
+                            $cryptPassword = $this->cryptPassword($password, $salt);
+                            if( $this->saveUser($login, $cryptPassword, $salt, 'user', $name, $age, $avatar) ){
+                                $result['message'] = 'пользователь успешно зарегистрирован';
+                                $result['result'] = true;
+                            } else {
+                                $result['message'] = 'Не удалось сохранить нового пользователя';
+                            }
+                        } else {
+                            $result['message'] = 'Возраст должен быть > 0';
+                        }
+                    } else{
+                        $result['message'] = 'Пользователь с таким именени и паролем уже существует';
+                    }
+                } else {
+                    $result['message'] = 'Пароль и подтверждение пароля не совпали';
+                }
+            } else {
+                $result['message'] = 'Неверный формат пароля';
+            }
+        } else {
+            $result['message'] = 'Неверный формат логина';
+        }
+  return $result;
+  
+    }
+    /*public function registr($login,$password,$repeat,$name,$age){
         
         $result=array (
             'result'=>false,
@@ -76,7 +151,40 @@ class Auth {
         
         return $result;
     }
+    */
     
+    
+    protected function saveUser( $login, $password, $salt, $role, $name, $age, $avatar ){
+        $connection = $this->_db->connection();
+
+        $connection->beginTransaction();
+        try{
+            $st1 = $connection->prepare("INSERT INTO users (login, password, salt, role) values(:login,:password,:salt,:role)");
+            $st1->bindParam(':login', $login);
+            $st1->bindParam(':password', $password);
+            $st1->bindParam(':salt', $salt);
+            $st1->bindParam(':role', $role);
+
+            if( $st1->execute() ) {
+                $userId = $connection->lastInsertId();
+                $st2 = $connection->prepare("INSERT INTO user_profile (userId, name, age, avatar) values(:userId,:name,:age,:avatar)");
+                $st2->bindParam(':userId', $userId);
+                $st2->bindParam(':name', $name);
+                $st2->bindParam(':age', $age);
+                $st2->bindParam(':avatar', $avatar);
+                if( $st2->execute() ){
+                    $connection->commit();
+                    return true;
+                }
+            }
+            throw new Exception('Сохранить пользователя не удалось!');
+
+        } catch( Exception $e ){
+            $connection->rollBack();
+            return false;
+        }
+    }
+/*
     protected function saveUser($login,$password,$repeat,$name,$age,$avatar){
         
         $salt=md5(time()."+".rand());
@@ -103,14 +211,48 @@ class Auth {
         }
         
         return true;
-    }
+    }*/
 
         /**
      * Авторизует пользовотеля по паре login/password
      * @param string $login
      * @param string $password
      */
-    public function login( $login, $password)
+    
+    public function login($login, $password, $rememberMe)
+    {
+        $result = array(
+            'result' => false,
+            'message' => 'Неизвестная ошибка',
+        );
+        if(
+            $this->validateLogin($login) &&
+            $this->validatePassword($password)
+        ) {
+            if( $user = $this->findUserByLogin($login) )
+            {
+                if( $this->checkPassword($password, $user)) {
+                    $_SESSION['userId'] = $user->userId;
+
+                    if( $rememberMe ) {
+                        setcookie( "news_project_user", $this->generateUserCookie($user), time() + 60*60*24, '/' );
+                    }
+                    $result['result'] = true;
+                    $result['message'] = 'Вы успешно авторизованы';
+                    $result['data'] = array( 'login' => $user->login );
+                } else {
+                    $result['message'] =  "Неверный пароль";
+                }
+            } else {
+                $result['message'] =  "Неверный логин";
+            }
+        } else {
+            $result['message'] =  "Логин или пароль неверного формата";
+        }
+        return $result;
+    }
+
+   /* public function login( $login, $password)
     {
         if( 
             $this->validateLogin($login) &&
@@ -134,7 +276,7 @@ class Auth {
         } else {
             $_SESSION['login_error_message'] = "Логин или пароль неверного формата";
         }
-    }
+    }*/
     
     /**
      * Авторизует пользователя на основе COOKIE
