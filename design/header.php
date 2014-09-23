@@ -16,13 +16,35 @@
                     }).done(function(response){
                         response = JSON.parse(response);
                         if( response && response.result ){
-                            $("#auth_area").html('<div id="auth_data"><i>' + response.data.login + '</i> <a href="<?=PROJECT_PATH?>/logout.php">выход</a></div>');
+                            $("#auth_area").html('<div id="auth_data"><i>' + response.data.login + '</i> <a id="auth_logout" href="<?=PROJECT_PATH?>/logout.php">выход</a></div>');
                         } else {
                             $("#auth_error").text(response.message);
                         }
                     });
                     return false;                
                 });
+                
+                $("#auth_logout").click(function(){
+                    $.post('/news_project/logout.php',{}).done(function(response){
+                        response = JSON.parse(response);
+                        if( response && response.result ) {
+                            $("#auth_area").html(
+                                    '<div id="auth_form">
+                                        <form action="<?=PROJECT_PATH?>/login.php" method="POST" >
+                                        <input id="auth_login" type="text" name="login" >
+                                        <input id="auth_password" type="password" name="password" >
+                                        <input id="auth_remember" type="checkbox" name="rememberMe" >
+                                        <input type="submit" value="вход" id="auth_button" >
+                                        </form>
+                                        <div class="reg_link"><a  href="<?=PROJECT_PATH?>/registration.php">зарегистрироваться</a></div>
+                                    </div>
+                                    <div id="auth_error" class="error"></div>'
+                            );
+                        }
+                    });
+                });
+                
+                
             });
         </script>
     </head>
@@ -32,7 +54,7 @@
             <div id="auth_area" class="auth-area">
                 <?php
                 if( $user = $auth->getAuthorizedUser() ) {
-                    ?><div id="auth_data"><i><?=$user->login?></i> <a href="<?=PROJECT_PATH?>/logout.php">выход</a></div><?php
+                    ?><div id="auth_data"><i><?=$user->login?></i> <a id="auth_logout" href="<?=PROJECT_PATH?>/logout.php">выход</a></div><?php
                 } else {
                     ?>
                     <div id="auth_form">
@@ -44,8 +66,8 @@
                         </form>
                         <div class="reg_link"><a  href="<?=PROJECT_PATH?>/registration.php">зарегистрироваться</a></div>
                     </div>
-                <?php }  ?>
-                <div id="auth_error" class="error"></div>
+                    <div id="auth_error" class="error"></div>
+                <?php }  ?>               
             </div>
         </div>
         <div class="content">

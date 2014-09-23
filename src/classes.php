@@ -302,9 +302,14 @@ class Auth {
         return false; 
     }
 
+    /**
+     * 
+     * @return boolean
+     */
     public function logout(){
         unset($_SESSION['userId']);
         setcookie('news_project_user', '', time() - 100, '/');
+        return true;
     }
 
     /**
