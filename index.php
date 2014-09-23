@@ -1,13 +1,14 @@
 <?php
 require('include.php');
 require(ROOT_PROJECT_PATH . '/design/header.php');
+require(ROOT_PROJECT_PATH . '/design/autorization.php');
 ?>    
 <?php
 $showNews = new NewsItemWriter($news);
 
 if(isset($_GET['id'])){
     $arNew = $showNews->writeFullNewsItem(intval($_GET['id']));
-    var_dump($arNew);
+    
     require( ROOT_PROJECT_PATH . '/news/index.php');
 }
 
@@ -17,7 +18,8 @@ else {
     $count_news = $showNews->countNewsItem();
     
     if (($page - 1) * NEWS_ITEMS_ON_PAGE >= $count_news) {
-            header("Location: " . PROJECT_PATH . "/404.php");
+           header("Location: " . PROJECT_PATH . "/404.php");
+          
         } 
         
     else {

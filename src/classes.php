@@ -275,9 +275,11 @@ class Auth {
                                 $salt = md5(time() . "+" . rand()); //случайно генерируем соль
                                 $cryptPassword = $this->cryptPassword($password, $salt);
                                 
-                                if($this->saveUser($login, $password, $salt, 'user', $name, $age, $avatar)) 
+                                if($this->saveUser($login, $password, $salt, 'user', $name, $age, $avatar))
+                                    {
                                     $result['message'] = 'Пользователь успешно зарегистрирован';
                                     $result['result'] = true;
+                                    }
                                 
                                 }
                             else {
