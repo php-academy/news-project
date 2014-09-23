@@ -167,6 +167,27 @@ class Auth {
         return $result;
     }
     
+    protected function saveAvatar( $avatar ) {
+        if(
+            isset($avatar['name'])
+            
+        ) {
+            $pathinfo = pathinfo($avatar);
+            $ext = $pathinfo['extension'] ? strtolower($pathinfo['extension']) : '';
+            if( in_array($ext, array('gif', 'png', 'jpg', 'jpeg')) ) {
+                $avatarName = md5(time().$avatar['name']) . '.' . $ext;
+                $avatarPath = ROOT_PROJECT_PATH . '/img/' . $avatarName;
+                if( move_uploaded_file($avatar['tmp_name'], $avatarPath) ) {
+                    return '/img/' . $avatarName;
+                }
+            }
+        }
+        return null;
+    }
+
+
+
+
     public function register( $login, $password, $repeat, $name = null, $age = null, $avatar = null){
         $result = array(
             'result' => false,
@@ -185,14 +206,24 @@ class Auth {
                             $age = intval( $age );
                         }
                         if( $age > 0 ){
+                            $avatarUrl = null;
+                            if( $avatar ) {
+                                if( !($avatarUrl = $this->saveAvatar($avatar)) )
+                                {
+                                    $result['message'] = 'Не удалось сохранить аватар';
+                                    return $result; 
+                                }
+                            }  
+                            
                             $salt = md5( time() . "+" . rand() );
                             $cryptPassword = $this->cryptPassword($password, $salt);
-                            if( $this->saveUser($login, $cryptPassword, $salt, 'user', $name, $age, $avatar) ){
+                            if( $this->saveUser($login, $cryptPassword, $salt, 'user', $name, $age, $avatarUrl) ){
                                 $result['message'] = 'пользователь успешно зарегистрирован';
                                 $result['result'] = true;
                             } else {
                                 $result['message'] = 'Не удалось сохранить нового пользователя';
                             }                         
+                            
                         } else {
                             $result['message'] = 'Возраст должен быть > 0';
                         }
