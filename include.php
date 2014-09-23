@@ -1,4 +1,5 @@
 <?php
+ob_start();
 define('PROJECT_PATH', '/news_project');
 define('ROOT_PROJECT_PATH', $_SERVER['DOCUMENT_ROOT'] . PROJECT_PATH);
 require(ROOT_PROJECT_PATH . '/src/init.php');

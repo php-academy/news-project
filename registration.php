@@ -13,8 +13,8 @@ if( isset($_POST['login']) && isset($_POST['password']) && isset($_POST['repeat'
         
         if ($arResult['result']) {
             $_SESSION['register_result'] = $arResult['message'];
-            $hr = header('Location: ' . (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : PROJECT_PATH) );
-            var_dump($hr);  
+             header('Location: ' . PROJECT_PATH );
+            ob_end_flush();  //собираем хэдеры в кучу
         }
         else {
             $_SESSION['register_result'] = $arResult['message'];

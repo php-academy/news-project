@@ -8,6 +8,7 @@ if(
 {
     $auth->login($_POST['login'], $_POST['password']);
     header('Location: ' . (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : PROJECT_PATH)  );
+    ob_end_flush(); 
 } else {
     header('Location: ' . PROJECT_PATH );
 }

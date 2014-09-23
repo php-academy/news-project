@@ -19,7 +19,8 @@ else {
     
     if (($page - 1) * NEWS_ITEMS_ON_PAGE >= $count_news) {
            header("Location: " . PROJECT_PATH . "/404.php");
-          
+           print_r(headers_list());
+           ob_end_flush();
         } 
         
     else {

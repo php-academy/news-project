@@ -169,11 +169,12 @@ class Auth {
         ) {
             $rememberMe = (isset($_POST['rememberMe']) && $_POST['rememberMe']) ? true : false;
 
-            if ($user = $this->findUserByLogin($login)) {
-                if ($this->checkPassword($password, $user)) {
-                    $_SESSION['userId'] = $user->userId;
-                    if ($rememberMe) {
+            if ($user = $this->findUserByLogin($login)) {              
+                if ($this->checkPassword($password, $user)) {                    
+                    $_SESSION['login'] = $user->login;   //проверку делаем чере злогин, тк userId = null (задаётся в бд)               
+                    if ($rememberMe) {var_dump($user);                    
                         setcookie("news_project_user", $this->generateUserCookie($user), time() + 60 * 60 * 24, '/');
+                        
                     }
                 } else {
                     $_SESSION['login_error_message'] = "Неверный пароль";
@@ -211,7 +212,8 @@ class Auth {
      * Проверет авторизован ли пользователь или нет
      */
     public function isUserAuthorized() {
-        if (isset($_SESSION['userId'])) {
+        if (isset($_SESSION['login'])) {
+           
             return true;
         } else {
             return false;
@@ -224,14 +226,14 @@ class Auth {
      */
     public function getAuthorizedUser() {
         if ($this->isUserAuthorized()) {
-            $user = $this->findUserById($_SESSION['userId']);
+            $user = $this->findUserByLogin($_SESSION['login']);
             return $user;
         }
         return false;
     }
 
     public function logout() {
-        unset($_SESSION['userId']);
+        unset($_SESSION['login']);
         setcookie('news_project_user', '', time() - 100, '/');
     }
     
@@ -275,9 +277,9 @@ class Auth {
                                 $salt = md5(time() . "+" . rand()); //случайно генерируем соль
                                 $cryptPassword = $this->cryptPassword($password, $salt);
                                 
-                                if($this->saveUser($login, $password, $salt, 'user', $name, $age, $avatar))
+                                if($this->saveUser($login, $cryptPassword, $salt, 'user', $name, $age, $avatar))
                                     {
-                                    $result['message'] = 'Пользователь успешно зарегистрирован';
+                                    $result['message'] = 'Вы успешно зарегестрированны. Для входа введите логин/ пароль';
                                     $result['result'] = true;
                                     }
                                 
