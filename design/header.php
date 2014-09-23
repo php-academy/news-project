@@ -1,8 +1,31 @@
 <html>
     <head>
-        <title>
+             <title>
             Наши новости
         </title>
+        <meta charset="UTF-8" />
+        <link href="<?=PROJECT_PATH?>/css/style.css" rel="stylesheet" />
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script type="text/javascript">
+            $( document ).ready(function() {
+                $("#auth_button").click(function(){
+                    $.post('/news_project/login.php',{
+                        login: $("#auth_login").val(),
+                        password: $("#auth_password").val(),
+                        rememberMe:  $("#auth_remember").val()
+                    }).done(function(response){
+                        response = JSON.parse(response);
+                        if( response && response.result ){
+                            $("#auth_area").html('<div id="auth_data"><i>' + response.data.login + '</i> <a href="<?=PROJECT_PATH?>/logout.php">выход</a></div>');
+                        } else {
+                            $("#auth_error").text(response.message);
+                        }
+                    });
+                    return false;
+                });
+            });
+        </script>
+
         <meta charset="UTF-8" />
         <link href="<?=PROJECT_PATH?>/css/style.css" rel="stylesheet" />
     </head>
