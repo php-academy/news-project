@@ -101,7 +101,7 @@ class NewsItemWriter {
     const DEFAULT_CUT_LENGTH = 100;
     const DEFAULT_DATE_FORMAT = 'H:i:s d.m.Y';
 
-
+    protected $_db;
     protected $news;
     
     public function __construct($news) {
@@ -178,6 +178,7 @@ class NewsItemWriter {
 
 }
 
+
 class Auth {
 
     protected $_db;
@@ -204,11 +205,12 @@ class Auth {
            
             if ($user = $this->findUserByLogin($login)) {              
                 if ($this->checkPassword($password, $user)) {                    
-                    $_SESSION['login'] = $user->login;   //проверку делаем чере злогин, тк userId = null (задаётся в бд)               
+                    $_SESSION['login'] = $user->login;   //проверку делаем через логин, тк userId = null (задаётся в бд)               
                     if ($rememberMe) {                    
                         setcookie("news_project_user", $this->generateUserCookie($user), time() + 60 * 60 * 24, '/');
                         $result['result'] = true;
                         $result['message'] = 'Успешный вход';
+                        $result['data'] = array( 'login' => $user->login );
                     }
                 } else {
                     $result['message'] = "Неверный пароль";
