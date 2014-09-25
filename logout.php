@@ -1,4 +1,9 @@
 <?php
 require('include.php');
-$auth->logout();
-header('Location: ' . (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : PROJECT_PATH)  );
+if($auth->logout()) {
+    $responce = array ( 'result' =>  true);
+}
+else {
+    $responce = array ( 'result' =>  false);
+}
+echo json_encode($responce);

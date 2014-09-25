@@ -98,6 +98,9 @@ class NewsItem {
 }
 
 class NewsItemWriter {
+    const DEFAULT_CUT_LENGTH = 100;
+    const DEFAULT_DATE_FORMAT = 'H:i:s d.m.Y';
+
 
     protected $news;
     
@@ -105,7 +108,33 @@ class NewsItemWriter {
         $this->news = $news;
     }
     
+    /**
+     * Обрезает новость для списка новостей
+     * @param string $text
+     * @param integer $cut_length
+     * @return string
+     */
+    public static function cut_text($text, $cut_length = self::DEFAULT_CUT_LENGTH) {
+        $arText = explode('.', $text, 3);
+        $str = $arText[0];
+        if(isset($arText[1])) {
+            $str .= '. ' . $arText[1] . '.';
+        }
+
+        if( strlen($str) < $cut_length ){
+            return $str;
+        } else {
+            return substr($str, 0, $cut_length) . ' ...';
+        }
+    }
     
+    public static function format_date( $date, $format = self::DEFAULT_DATE_FORMAT){
+        $timestamp = strtotime($date);
+        $formatedDate = date($format, $timestamp);
+        return $formatedDate;
+    }
+
+
     /**
      * Выводит новость целиком на страницу
      * @param NewsItem $new
@@ -162,29 +191,35 @@ class Auth {
      * @param string $login
      * @param string $password
      */
-    public function login($login, $password) {
+    public function login($login, $password, $rememberMe) {
+        
+        $result = array(
+            'result' => false,
+            'message' => 'Сообщение'
+        );
         if (
                 $this->validateLogin($login) &&
                 $this->validatePassword($password)
         ) {
-            $rememberMe = (isset($_POST['rememberMe']) && $_POST['rememberMe']) ? true : false;
-
+           
             if ($user = $this->findUserByLogin($login)) {              
                 if ($this->checkPassword($password, $user)) {                    
                     $_SESSION['login'] = $user->login;   //проверку делаем чере злогин, тк userId = null (задаётся в бд)               
-                    if ($rememberMe) {var_dump($user);                    
+                    if ($rememberMe) {                    
                         setcookie("news_project_user", $this->generateUserCookie($user), time() + 60 * 60 * 24, '/');
-                        
+                        $result['result'] = true;
+                        $result['message'] = 'Успешный вход';
                     }
                 } else {
-                    $_SESSION['login_error_message'] = "Неверный пароль";
+                    $result['message'] = "Неверный пароль";
                 }
             } else {
-                $_SESSION['login_error_message'] = "Неверный логин";
+                $result['message'] = "Неверный логин";
             }
         } else {
-            $_SESSION['login_error_message'] = "Логин или пароль неверного формата";
+            $result['message'] = "Логин или пароль неверного формата";
         }
+        return $result;
     }
 
     /**
@@ -231,10 +266,12 @@ class Auth {
         }
         return false;
     }
-
+    
+    
     public function logout() {
         unset($_SESSION['login']);
         setcookie('news_project_user', '', time() - 100, '/');
+        return true;
     }
     
     /**

@@ -1,7 +1,7 @@
 <?php
 require('include.php');
 require(ROOT_PROJECT_PATH . '/design/header.php');
-require(ROOT_PROJECT_PATH . '/design/autorization.php');
+
 ?>    
 <?php
 $showNews = new NewsItemWriter($news);
