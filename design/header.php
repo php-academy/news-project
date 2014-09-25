@@ -16,7 +16,8 @@
                         }).done(function(response) {
                          response = JSON.parse(response);
                         if(response && response.result) {
-                           $("#auth_area").html('<div id="auth_data"><i>' + response.data.login + '</i> <a href="<?=PROJECT_PATH?>/logout.php">Выход</a></p>');
+                         
+                           $("#auth_area").html('<div id="auth_data"><i>Вы вошли как ' + response.result.login + '</i> <a href="<?=PROJECT_PATH?>/logout.php">Выход</a></p>');
                         } else {
                            $("#auth_error").text(response.message);
                         }
