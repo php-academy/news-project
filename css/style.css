@@ -1,6 +1,40 @@
-.header{ height: 50px; width: 100%; border-bottom: 2px solid #ccc; text-align: center; font-size:24px;}
-.footer{ height: 50px; width: 100%; border-top: 2px solid #ccc; text-align: center;}
-.login-area{ float: right; margin-top: -20px; }
-.login-line{ font-size: 16px; }
-.login-error-message{ color: red; font-size: 12px;}
-.login-success-message{ color: green; font-size: 12px;}
+.header{ 
+    height: 50px; 
+    width: 100%; 
+    border-bottom: 2px solid #ccc; 
+    text-align: center; 
+    font-size:24px;
+}
+.footer{ 
+    height: 50px; 
+    width: 100%; 
+    border-top: 2px solid #ccc; 
+    text-align: center;
+}
+
+.auth-area{ 
+    float: right; 
+    margin-top: 20px; 
+}
+
+.reg-link{ 
+    float: right; 
+    font-size: 16px; 
+    
+}
+
+.error{ 
+    float: right; 
+    color: red; 
+    font-size: 15px; 
+     text-align: right;
+     
+}
+
+.ok{ 
+    float: right; 
+    color: green; 
+    font-size: 12px;
+    text-align: right;
+    margin-top: 20px; 
+}
