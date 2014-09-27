@@ -130,3 +130,5 @@ $news_element = new NewsItemWriter();
 $news_element->fullWriter($news_element);
 echo $news_element;
 echo "hello world";
+?>
+kdbjjj
