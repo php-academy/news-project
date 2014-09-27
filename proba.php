@@ -128,4 +128,4 @@ class NewsItem{
 }
 $news_element = new NewsItemWriter();
 $news_element->fullWriter($news_element);
-return $news_element;
+echo $news_element;
