@@ -10,7 +10,7 @@ class NewsItem{
     protected $id;
     
     
-    public $writer;
+   
 
 
     /**
@@ -27,7 +27,7 @@ class NewsItem{
         $this->text=$text;
         $this->id=$id;
         
-        $this->writer= new NewsItemWriter();
+
     }
     
       public function __call($name,$argument){
