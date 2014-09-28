@@ -21,7 +21,7 @@ class NewsItem{
      * @param integer $id 
      */
     
-    public function __construct($publish_date=null,$title=null,$text=null,$id=null) {
+    public function __construct($publish_date,$title,$text,$id) {
         $this->publish_date=$publish_date;
         $this->title=$title;
         $this->text=$text;
