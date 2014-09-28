@@ -67,8 +67,7 @@ class Auth {
         $this->_db = new DB();
     }
 
-    
-    public function register( $login, $password, $repeat, $name = null, $age = null, $avatar = null){
+  public function register( $login, $password, $repeat, $name = null, $age = null, $avatar = null){
         $result = array(
             'result' => false,
             'message' => 'unknown error'
@@ -82,22 +81,30 @@ class Auth {
                             $name = strip_tags($name);
                             $name = htmlspecialchars($name);
                         }
-                        if( !is_null($age) ){
-                            $age = intval( $age );
-                        }
-                        if( $age > 0 ){
+
+                        if( is_null($age) || intval($age) > 0 ){
+                            $avatarUrl = null;
+                            if( $avatar ) {
+                                if( !($avatarUrl = $this->saveAvatar($avatar)) )
+                                {
+                                    $result['message'] = 'Не удалось сохранить аватар';
+                                    return $result;
+                                }
+                            }
+
                             $salt = md5( time() . "+" . rand() );
                             $cryptPassword = $this->cryptPassword($password, $salt);
-                            if( $this->saveUser($login, $cryptPassword, $salt, 'user', $name, $age, $avatar) ){
+                            if( $this->saveUser($login, $cryptPassword, $salt, 'user', $name, $age, $avatarUrl) ){
                                 $result['message'] = 'пользователь успешно зарегистрирован';
                                 $result['result'] = true;
                             } else {
                                 $result['message'] = 'Не удалось сохранить нового пользователя';
                             }
+
                         } else {
                             $result['message'] = 'Возраст должен быть > 0';
                         }
-                    } else{
+  } else{
                         $result['message'] = 'Пользователь с таким именени и паролем уже существует';
                     }
                 } else {
@@ -109,9 +116,10 @@ class Auth {
         } else {
             $result['message'] = 'Неверный формат логина';
         }
-  return $result;
-  
+
+        return $result;
     }
+                                                    
     /*public function registr($login,$password,$repeat,$name,$age){
         
         $result=array (
@@ -219,7 +227,7 @@ class Auth {
      * @param string $password
      */
     
-    public function login($login, $password, $rememberMe)
+     public function login($login, $password, $rememberMe)
     {
         $result = array(
             'result' => false,
@@ -250,6 +258,25 @@ class Auth {
             $result['message'] =  "Логин или пароль неверного формата";
         }
         return $result;
+    }
+
+    
+      protected function saveAvatar( $avatar ) {
+        if(
+            isset($avatar['name'])
+
+        ) {
+            $pathinfo = pathinfo($avatar['name']);
+            $ext = $pathinfo['extension'] ? strtolower($pathinfo['extension']) : '';
+            if( in_array($ext, array('gif', 'png', 'jpg', 'jpeg')) ) {
+                $avatarName = md5(time().$avatar['name']) . '.' . $ext;
+                $avatarPath = ROOT_PROJECT_PATH . '/img/' . $avatarName;
+                if( move_uploaded_file($avatar['tmp_name'], $avatarPath) ) {
+                    return '/img/' . $avatarName;
+                }
+            }
+        }
+        return null;
     }
 
    /* public function login( $login, $password)
@@ -328,6 +355,8 @@ class Auth {
     public function logout(){
         unset($_SESSION['userId']);
         setcookie('news_project_user', '', time() - 100, '/');
+        
+        return true;
     }
 
     /**
