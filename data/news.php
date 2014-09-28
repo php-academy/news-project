@@ -17,7 +17,7 @@ $stmt -> execute ( ) ;
 
 $result = $stmt->fetchAll(PDO::FETCH_CLASS, "NewsItem");
 
-echo $result[0]->text;
+echo $result[0]->getText();
 
 //select * from users inner join user_role on users.user_id=user_role.user_id inner join roles on user_role.role_id=roles.role_id;
 /*$data = array();
