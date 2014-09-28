@@ -2,41 +2,61 @@
 require('include.php');
 require(ROOT_PROJECT_PATH . '/design/header.php');
 
-if(isset($_POST["login"]) && isset($_POST["password"]) && isset($_POST["repeat"]) 
-        && isset($_POST["name"]) && isset($_POST["age"]) ){
-    
-    
-    $reg=$auth->registr();
-    
-    if ($reg){
-        
-        $_SESSION["registr_result"]=$arResult["message"];
-         header('Location: ' . (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : PROJECT_PATH)  );
-        unset($_SESSION["registr_result"]);
-    }
+
+if( isset($_POST['login']) && isset($_POST['password']) && isset($_POST['repeat']) ){
+    $name   = isset($_POST['name']) ? $_POST['name'] : null;
+    $age    = isset($_POST['age']) ? intval($_POST['age']) : null;
+     $avatar = (isset($_FILES['avatar']) && $_FILES['avatar']['size']) ? $_FILES['avatar'] : null ;
+
+    /**
+     * array(
+     *      'result' => true | false,
+     *      'message'  => "Вы успешно зареганы" | "Сообщение об ошибке"
+     * );
+     */
+    $arResult = $auth->register(
+        $_POST['login'],
+        $_POST['password'],
+        $_POST['repeat'],
+        $name,
+        $age,
+        $avatar
+    );
 }
-
-if(isset($_SESSION["registr_result"])){
-    
-    echo $_SESSION["registr_result"];
-}
-
-
+require(ROOT_PROJECT_PATH . '/design/header.php');
 ?>
-
-<form method="POST" action="registration.php">
-    <p><label>Логин
-    <input type="text" name="login"/><label></p>
-     <p><label>Пароль
-      <input type="password" name="password"/><label></p>   
-           <p><label>Повторите пароль
-      <input type="password" name="repeat"/><label><p>  
-           <p><label>Имя
-    <input type="text" name="name"/><label></p>
-         <p><label>Возраст
-    <input type="text" name="age"/><label><p>
-         <p><input type="submit" value="Ok"></p>
-    
+<h1>Регистрация</h1>
+<form method="POST" action="registration.php" >
+    <p>
+        * Логин: <input type="text" name="login" />
+    </p>
+    <p>
+        * Пароль: <input type="password" name="password" />
+    </p>
+    <p>
+        * Еще раз: <input type="password" name="repeat" />
+    </p>
+    <p>
+        Имя: <input type="text" name="name" />
+    </p>
+     <p>
+       Возраст: <input type="text" name="age" />
+    </p>
+    <p>
+        Аватар: <input type="file" name="avatar" />
+    </p>
+    <p>
+        <input type="submit" name="register" value="Зарегистрировать" />
+    </p>
 </form>
+
+<?php
+if( isset($arResult) ) {
+    $class = $arResult['result'] ? 'login-success-message' : 'login-error-message' ;
+    ?><p class="<?=$class?>"><?=$arResult['message']?></p><?php
+}
+?>
+    <p><a href="<?php echo PROJECT_PATH ?>/">на главную</a></p>
+
 <?php
 require( ROOT_PROJECT_PATH . '/design/footer.php');
