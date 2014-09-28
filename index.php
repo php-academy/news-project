@@ -11,7 +11,7 @@ if( ($page-1)*NEWS_ITEMS_ON_PAGE >= $count_news ) {
 } else {
     $news = array_slice($news, ($page-1)*NEWS_ITEMS_ON_PAGE, NEWS_ITEMS_ON_PAGE);
     foreach( $news as $id => $news_element ) {
-        $newsWriter->writeNewsItem($news_element);
+        $newsWriter->writeNewsItem($news_element,2);
     }
 }
 
