@@ -30,8 +30,3 @@ $stmt -> closeCursor ( ) ;
 
 return $result;
 
-
-
-
-
-return $news_data;
