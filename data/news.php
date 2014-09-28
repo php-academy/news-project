@@ -10,7 +10,7 @@ $newsWriter=new NewsItemWriter();
 
 
 
-$stmt = Database :: prepare ( "select n.date_time,n.title,n.text,n.news_id from news order by n.date_time desk" ) ;
+$stmt = Database :: prepare ( "select n.date_time,n.title,n.text,n.news_id from news order by n.date_time desc;" ) ;
 $stmt -> execute ( ) ;
 
 
