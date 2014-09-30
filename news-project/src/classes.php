@@ -449,7 +449,6 @@ class NewsDBPicker {
      */
     public function newsPicker($id) {
         $connection = $this->_db->connection();
-        $connection->beginTransaction();
         $st = $connection->prepare("select * from news where newsId=:newsId");
         $st->bindParam(':newsId', $id);
         $st->setFetchMode(PDO::FETCH_CLASS, 'NewsItem');
@@ -462,7 +461,6 @@ class NewsDBPicker {
     
     public function pickNewsRange($id, $limit) {
         $connection = $this->_db->connection();
-        $connection->beginTransaction();
         $st = $connection->prepare("select * from news where newsId=:newsId order by publishDate desc limit=:limit");
         $st->bindParam(':newsId', $id);
         $st->bindParam(':limit', $limit);
@@ -481,7 +479,6 @@ class NewsDBPicker {
     
     public function countNews() {
         $connection = $this->_db->connection();
-        $connection->beginTransaction();
         $st = $connection->prepare('select * from news');
         if($st->execute() && $count = $st->rowCount()) {
             return $count;
