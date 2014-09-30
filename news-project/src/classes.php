@@ -447,12 +447,12 @@ class NewsDBPicker {
      * @return NewsItem
      * @throws Exception
      */
-    public function newsPicker($id) {
+    public function pickNews($id) {
         $connection = $this->_db->connection();
-        $st = $connection->prepare("select * from news where newsId=:newsId");
-        $st->bindParam(':newsId', $id);
+        $st = $connection->prepare("select * from news where newsId=" . $id);
         $st->setFetchMode(PDO::FETCH_CLASS, 'NewsItem');
-        if($st->execute() && $news_element = $st->fetch()) {
+        if($st->execute()) {
+            $news_element = $st->fetch();
             return $news_element;
         } else {
             throw new Exception("Cannot fetch news from db");
@@ -461,9 +461,7 @@ class NewsDBPicker {
     
     public function pickNewsRange($id, $limit) {
         $connection = $this->_db->connection();
-        $st = $connection->prepare("select * from news where newsId=:newsId order by publishDate desc limit=:limit");
-        $st->bindParam(':newsId', $id);
-        $st->bindParam(':limit', $limit);
+        $st = $connection->prepare("select * from news where newsId=" . $id . " order by publishDate desc limit=" . $limit);
         $st->setFetchMode(PDO::FETCH_CLASS, 'NewsItem');
         $newsArray = array();
         if($st->execute()) {

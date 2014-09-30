@@ -9,7 +9,7 @@
         isset($news[$id])
     ){
         $news = new NewsDBPicker;
-        NewsItemWriter::writeFullNew($news->newsPicker($id));
+        NewsItemWriter::writeFullNew($news->pickNews($id));
     } else {
         header("Location: ".PROJECT_PATH."/404.php");
     }
