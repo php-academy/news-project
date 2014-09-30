@@ -43,24 +43,27 @@
             <div class="login-area">
                 <?php
                 if( $user = $auth->getAuthorizedUser()) {
-                    ?><p class="login-line"><i><?php
+                    ?><p class="login-line"><div id="auth_data"><i><?php
                         $profileData = $auth->getUserProfileData($user->userId);
                         if(isset($profileData['avatar'])) {
                             $avName = $profileData['avatar'];
-                            $avPath = PROJECT_PATH . "/img/" . $avName;
+                            $avPath = ROOT_PROJECT_PATH . $avName;
                             echo "<img src='" . $avPath . "' width='50px' height='50px' />";
                         } else {
                             echo $user->login;
                         }
-                    ?></i> <a href="<?=PROJECT_PATH?>/logout.php" id="auth_logout">Выход</a></p><?php
+                    ?></i></div><a href="<?=PROJECT_PATH?>/logout.php" id="auth_logout">Выход</a></p><?php
                 } else {
                     ?>
-                        <form action="<?=PROJECT_PATH?>/login.php" method="POST" >
-                            Логин: <input id='auth_login' type="text" name="login" ><br>
-                            Пароль: <input id='auth_password' type="password" name="password" ><br>
-                            <input type="checkbox" name="rememberMe" >Запомнить меня<br>
-                            <input type="submit" value="Вход" id="auth_button">
-                        </form>
+                        <div id='auth_form'>
+                            <form action="<?=PROJECT_PATH?>/login.php" method="POST" >
+                                Логин: <input id='auth_login' type="text" name="login" ><br>
+                                Пароль: <input id='auth_password' type="password" name="password" ><br>
+                                <input type="checkbox" name="rememberMe" >Запомнить меня<br>
+                                <input type="submit" value="Вход" id="auth_button">
+                            </form>
+                            <div class="reg_link"><a  href="<?=PROJECT_PATH?>/registration.php">зарегистрироваться</a></div>
+                        </div>
                 <?php } ?>
                 <?php
                 if( isset($_SESSION['login_error_message']) && trim($_SESSION['login_error_message']) ){
