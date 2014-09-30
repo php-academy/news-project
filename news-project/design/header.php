@@ -42,8 +42,17 @@
             Это новостной портал 
             <div class="login-area">
                 <?php
-                if( $user = $auth->getAuthorizedUser() ) {
-                    ?><p class="login-line"><i><?=$user->login?></i> <a href="<?=PROJECT_PATH?>/logout.php" id="auth_logout">Выход</a></p><?php
+                if( $user = $auth->getAuthorizedUser()) {
+                    ?><p class="login-line"><i><?php
+                        $profileData = $auth->getUserProfileData($user->userId);
+                        if(isset($profileData['avatar'])) {
+                            $avName = $profileData['avatar'];
+                            $avPath = PROJECT_PATH . "/img/" . $avName;
+                            echo "<img src='" . $avPath . "' width='50px' height='50px' />";
+                        } else {
+                            echo $user->login;
+                        }
+                    ?></i> <a href="<?=PROJECT_PATH?>/logout.php" id="auth_logout">Выход</a></p><?php
                 } else {
                     ?>
                         <form action="<?=PROJECT_PATH?>/login.php" method="POST" >

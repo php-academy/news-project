@@ -48,6 +48,18 @@ class Auth {
         $this->_db = new DB();
     }
     
+    public function getUserProfileData($userId) {
+        $connection = $this->_db->connection();
+        $st = $connection->prepare('select * from user_profile where userId=:userId');
+        $st->bindParam(':userId', $userId);
+        $st->setFetchMode(PDO::FETCH_ASSOC);
+        if($st->execute() && $profileData = $st->fetch()) {
+            return $profileData;
+        } else {
+            return false;
+        }
+    }
+    
     /**
      * Авторизует пользовотеля по паре login/password
      * @param string $login
@@ -175,7 +187,7 @@ class Auth {
         $connection->beginTransaction();
         try {
             $salt = md5(time() . "+" . rand());
-            $st = $connection->prepare("insert into users (login, role, password, salt) values(:login, :role, :password, :salt)");
+            $st1 = $connection->prepare("insert into users (login, role, password, salt) values(:login, :role, :password, :salt)");
             $st1->bindParam(':login', $login);
             $st1->bindParam(':role', $role);
             $st1->bindParam(':password', $password);
@@ -452,8 +464,7 @@ class NewsDBPicker {
         $st = $connection->prepare("select * from news where newsId=:newsId");
         $st->bindParam(':newsId', $id);
         $st->setFetchMode(PDO::FETCH_CLASS, 'NewsItem');
-        if($st->execute()) {
-            $news_element = $st->fetch();
+        if($st->execute() && $news_element = $st->fetch()) {
             return $news_element;
         } else {
             throw new Exception("Cannot fetch news from db");
