@@ -481,6 +481,7 @@ class NewsDBPicker {
     
     public function countNews() {
         $connection = $this->_db->connection();
+        $connection->beginTransaction();
         $connection->query('SELECT COUNT(*) as count FROM news');
         $connection->setFetchMode(PDO::FETCH_ASSOC);
         if($count = $connection->fetch()) {
