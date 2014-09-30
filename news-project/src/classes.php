@@ -134,6 +134,7 @@ class Auth {
                             $name = strip_tags($name);
                             $name = htmlspecialchars($name);
                         }
+                        
                         if( is_null($age) || intval($age) > 0 ){
                             $avatarUrl = null;
                             if( $avatar ) {
@@ -143,6 +144,7 @@ class Auth {
                                     return $result; 
                                 }
                             }  
+                            
                             $salt = md5( time() . "+" . rand() );
                             $cryptPassword = $this->cryptPassword($password, $salt);
                             if( $this->saveUser($login, $cryptPassword, $salt, 'user', $name, $age, $avatarUrl) ){
@@ -182,35 +184,35 @@ class Auth {
      * @param string $avatar
      * @return boolean
      */
-    protected function saveUser($login, $password, $salt, $role, $name = null, $age = null, $avatar = null) {
+    protected function saveUser( $login, $password, $salt, $role, $name, $age, $avatar ){
         $connection = $this->_db->connection();
+        
         $connection->beginTransaction();
-        try {
-            $salt = md5(time() . "+" . rand());
-            $st1 = $connection->prepare("insert into users (login, role, password, salt) values(:login, :role, :password, :salt)");
+        try{
+            $st1 = $connection->prepare("INSERT INTO users (login, role, password, salt) values(:login,:role,:password,:salt)");
             $st1->bindParam(':login', $login);
-            $st1->bindParam(':role', $role);
             $st1->bindParam(':password', $password);
             $st1->bindParam(':salt', $salt);
-            if($st1->execute()) {
+            $st1->bindParam(':role', $role);
+
+            if( $st1->execute() ) {
                 $userId = $connection->lastInsertId();
-                $st2 = $connection->prepare("insert into user_profile (login, password, salt, role) values(:userId, :name, :age, :avatar)");
+                $st2 = $connection->prepare("INSERT INTO user_profile (userId, name, age, avatar) values(:userId,:name,:age,:avatar)");
                 $st2->bindParam(':userId', $userId);
                 $st2->bindParam(':name', $name);
                 $st2->bindParam(':age', $age);
                 $st2->bindParam(':avatar', $avatar);
-            
-                if($st2->execute()) {
+                if( $st2->execute() ){
                     $connection->commit();
                     return true;
                 }
-            } else {
-                throw new Exception('Сохранить пользователя не удалось!');
             }
-        } catch (Exception $e) {
-            $connection->rollback;
+            throw new Exception('Сохранить пользователя не удалось!');        
+            
+        } catch( Exception $e ){
+            $connection->rollBack();
             return false;
-        }
+        }       
     }
     
     /**
