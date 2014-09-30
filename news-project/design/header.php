@@ -7,21 +7,21 @@
         <link href="<?=PROJECT_PATH?>/css/style.css" rel="stylesheet" />
         <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js">
         <script type="text/javascript">
-            $(document).ready(function() {
-                $('#auth_button').click(function() {
-                    $.post('/news-project/login.php', {
-                        login: $('#auth_login').val(),
-                        password: $('#auth_password').val(),
-                        rememberMe: true,
-                    }).done(function(response) {
+            $( document ).ready(function() {
+                $("#auth_button").click(function(){
+                    $.post('/news_project/login.php',{
+                        login: $("#auth_login").val(),
+                        password: $("#auth_password").val(),
+                        rememberMe:  $("#auth_remember").val()
+                    }).done(function(response){
                         response = JSON.parse(response);
-                        if(response && response.result) {
-                            $('#login-area').html('<div id="auth_data"><i>' + response.data.login + '</i><a id="auth_logout" href="">')
+                        if( response && response.result ){
+                            $("#login-area").html('<div id="auth_data"><i>' + response.data.login + '</i> <a id="auth_logout" href="<?=PROJECT_PATH?>/logout.php">выход</a></div>');
                         } else {
-                            $('#login-area').text(response.message);
+                            $("#auth_error").text(response.message);
                         }
                     });
-                    return false;
+                    return false;                
                 });
                 
                 $("#auth_logout").click(function(){
@@ -47,7 +47,7 @@
                         $profileData = $auth->getUserProfileData($user->userId);
                         if(isset($profileData['avatar'])) {
                             $avName = $profileData['avatar'];
-                            $avPath = $avName;
+                            $avPath = PROJECT_PATH . $avName;
                             echo "<img src='" . $avPath . "' width='50px' height='50px' />";
                         } else {
                             echo $user->login;
