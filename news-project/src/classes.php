@@ -482,10 +482,9 @@ class NewsDBPicker {
     public function countNews() {
         $connection = $this->_db->connection();
         $connection->beginTransaction();
-        $st = $connection->prepare('SELECT COUNT(*) as count FROM news');
-        if($st->execute() && $count = $st->fetchAll()) {
-            $counter = $connection['count'];
-            return $counter;
+        $st = $connection->prepare('select * from news');
+        if($st->execute() && $count = $st->rowCount()) {
+            return $count;
         } else {
             return false;
         }
