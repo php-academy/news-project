@@ -8,7 +8,7 @@
         isset($_GET['id']) &&
         isset($news[$id])
     ){
-        $news = new NewsDBPicker;
+        $news = new NewsDBPicker();
         NewsItemWriter::writeFullNew($news->pickNews($id));
     } else {
         header("Location: ".PROJECT_PATH."/404.php");

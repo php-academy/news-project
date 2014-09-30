@@ -5,7 +5,7 @@
 <?php
     $page = (isset($_GET['page']) && intval($_GET['page'])) > 1 ? intval($_GET['page']) : 1;
     $news_per_page = 6;
-    $news = new NewsDBPicker;
+    $news = new NewsDBPicker();
     $count_news = $news->countNews();
     if(isset($_GET['page'])) {
         if(intval($_GET['page']) == 0) {
