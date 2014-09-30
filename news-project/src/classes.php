@@ -449,7 +449,8 @@ class NewsDBPicker {
      */
     public function pickNews($id) {
         $connection = $this->_db->connection();
-        $st = $connection->prepare("select * from news where newsId=" . $id);
+        $st = $connection->prepare("select * from news where newsId=:newsId");
+        $st->bindParam(':newsId', $id);
         $st->setFetchMode(PDO::FETCH_CLASS, 'NewsItem');
         if($st->execute()) {
             $news_element = $st->fetch();
@@ -459,9 +460,11 @@ class NewsDBPicker {
         }
     }
     
-    public function pickNewsRange($id, $limit) {
+    public function pickNewsRange($offset, $limit) {
         $connection = $this->_db->connection();
-        $st = $connection->prepare("select * from news where newsId=" . $id . " order by publishDate desc limit=" . $limit);
+        $st = $connection->prepare("select * from news order by publishDate desc limit :offset, :limit");
+        $st->bindParam(':offset', $offset);
+        $st->bindParam(':limit', $limit);
         $st->setFetchMode(PDO::FETCH_CLASS, 'NewsItem');
         $newsArray = array();
         if($st->execute()) {
