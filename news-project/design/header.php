@@ -47,7 +47,7 @@
                         $profileData = $auth->getUserProfileData($user->userId);
                         if(isset($profileData['avatar'])) {
                             $avName = $profileData['avatar'];
-                            $avPath = $avName;
+                            $avPath = ROOT_PROJECT_PATH . $avName;
                             echo "<img src='" . $avPath . "' width='50px' height='50px' />";
                         } else {
                             echo $user->login;
