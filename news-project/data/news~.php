@@ -50,19 +50,3 @@ $news_data = array(
             но копеечные туры еще больше отпугивают покупателей."
     )
 );
-
-$cmp_date = function($news_element_1, $news_element_2){
-    $date_1 = $news_element_1->publishDate;
-    $date_2 = $news_element_2->publishDate;
-    
-    $timestamp_1 = strtotime($date_1);
-    $timestamp_2 = strtotime($date_2);
-    
-    if( $timestamp_1 === $timestamp_2 ){
-        return 0;
-    } else {
-        return $timestamp_1 < $timestamp_2 ? 1 : -1;
-    }    
-};
-uasort($news_data, $cmp_date);
-return $news_data;

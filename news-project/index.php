@@ -5,7 +5,8 @@
 <?php
     $page = (isset($_GET['page']) && intval($_GET['page'])) > 1 ? intval($_GET['page']) : 1;
     $news_per_page = 6;
-    $count_news = count($news);
+    $news = new NewsDBPicker;
+    $count_news = $news->countNews();
     if(isset($_GET['page'])) {
         if(intval($_GET['page']) == 0) {
             header('Refresh: 0; url=' . PROJECT_PATH . '/?page=1');
@@ -18,7 +19,8 @@
     if(($page-1)*$news_per_page >= $count_news ) {
         echo "Страница не найдена";
     } else {
-        $news = array_slice($news, ($page-1)*$news_per_page, $news_per_page, true);
+        $news_pickFrom = ($page-1)*$news_per_page;
+        $news->pickNewsRange($news_pickFrom, $news_per_page);
         foreach($news as $id => $news_element) {
             NewsItemWriter::writeShortNews($news_element);
         }

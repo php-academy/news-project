@@ -13,16 +13,28 @@
                         login: $('#auth_login').val(),
                         password: $('#auth_password').val(),
                         rememberMe: true,
-                    }).done(function(data) {
-                        if(data == 'SUCCESS') {
-                            
+                    }).done(function(response) {
+                        response = JSON.parse(response);
+                        if(response && response.result) {
+                            $('#login-area').html('<div id="auth_data"><i>' + response.data.login + '</i><a id="auth_logout" href="">')
                         } else {
-                            
+                            $('#login-area').text(response.message);
                         }
                     });
                     return false;
                 });
-            });
+                
+                $("#auth_logout").click(function(){
+                    $.post('/news_project/logout.php',{}).done(function(response){
+                        response = JSON.parse(response);
+                        if( response && response.result ) {
+                            $("#auth_area").html(
+                                    "<div id='auth_form'><form action='<?=PROJECT_PATH?>/login.php' method='POST' ><input id='auth_login' type='text' name='login' ><input id='auth_password' type='password' name='password' ><input id='auth_remember' type='checkbox' name='rememberMe' ><input type='submit' value='вход' id='auth_button' ></form><div class='reg_link'><a  href='<?=PROJECT_PATH?>/registration.php'>зарегистрироваться</a></div></div><div id='auth_error' class='error'></div>"
+                            );
+                        }
+                    });
+                    return false;
+                });
         </script>
     </head>
     <body>
@@ -31,7 +43,7 @@
             <div class="login-area">
                 <?php
                 if( $user = $auth->getAuthorizedUser() ) {
-                    ?><p class="login-line"><i><?=$user->login?></i> <a href="<?=PROJECT_PATH?>/logout.php">Выход</a></p><?php
+                    ?><p class="login-line"><i><?=$user->login?></i> <a href="<?=PROJECT_PATH?>/logout.php" id="auth_logout">Выход</a></p><?php
                 } else {
                     ?>
                         <form action="<?=PROJECT_PATH?>/login.php" method="POST" >

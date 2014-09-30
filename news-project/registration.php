@@ -4,7 +4,7 @@ require('include.php');
 if( isset($_POST['login']) && isset($_POST['password']) && isset($_POST['repeat']) ){
     $name   = isset($_POST['name']) ? $_POST['name'] : null;
     $age    = isset($_POST['age']) ? intval($_POST['age']) : null;
-    $avatar = isset($_POST['avatar']) ? $_POST['avatar'] : null;
+    $avatar = isset($_FILES['avatar']) ? $_FILES['avatar'] : null;
     
     /**
      * array(
@@ -24,7 +24,7 @@ if( isset($_POST['login']) && isset($_POST['password']) && isset($_POST['repeat'
 require(ROOT_PROJECT_PATH . '/design/header.php');
 ?>
 <h1>Регистрация</h1>
-<form method="POST" action="registration.php" >
+<form method="POST" action="registration.php"  enctype="multipart/form-data">
     <p>
         Логин*: <input type="text" name="login" />
     </p>
@@ -39,6 +39,9 @@ require(ROOT_PROJECT_PATH . '/design/header.php');
     </p>
     <p>
        Возраст: <input type="text" name="age" />    
+    </p>
+    <p>
+        Аватар: <input type="file" name="avatar" />
     </p>
     <input type="submit" name="register" value="Зарегистрировать" />    
 </form>

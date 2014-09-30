@@ -80,6 +80,24 @@ class Auth {
         return false;
     }
     
+    protected function saveAvatar( $avatar ) {
+        if(
+            isset($avatar['name'])
+            
+        ) {
+            $pathinfo = pathinfo($avatar['name']);
+            $ext = $pathinfo['extension'] ? strtolower($pathinfo['extension']) : '';
+            if( in_array($ext, array('gif', 'png', 'jpg', 'jpeg')) ) {
+                $avatarName = md5(time().$avatar['name']) . '.' . $ext;
+                $avatarPath = ROOT_PROJECT_PATH . '/img/' . $avatarName;
+                if( move_uploaded_file($avatar['tmp_name'], $avatarPath) ) {
+                    return '/img/' . $avatarName;
+                }
+            }
+        }
+        return null;
+    }
+    
     /**
      * 
      * @param string $login
@@ -90,39 +108,46 @@ class Auth {
      * @param string $avatar
      * @return string & boolean
      */
-    public function register($login, $password, $repeat, $name = null, $age = null, $avatar = null) {
+    public function register( $login, $password, $repeat, $name = null, $age = null, $avatar = null){
         $result = array(
             'result' => false,
-            'message' => 'Unknown error'
+            'message' => 'unknown error'
         );
-        if($this->validateLogin($login)) {
-            if($this->validatePassword($password)) {
-                if($password == $repeat) {
-                    if(!$this->findUserByLogin($login)) {
-                        if(!is_null($name)) {
+        
+        if( $this->validateLogin($login) ){
+            if( $this->validatePassword($password) ){
+                if( $password == $repeat ) {
+                    if( !$this->findUserByLogin($login) ){
+                        if( !is_null( $name ) ){
                             $name = strip_tags($name);
                             $name = htmlspecialchars($name);
                         }
-                        if(!is_null($age)) {
-                            $age = intval($age);
-                        }
-                        if($age > 0) {
-                            $salt = md5(time() . "+" . rand());
+                        if( is_null($age) || intval($age) > 0 ){
+                            $avatarUrl = null;
+                            if( $avatar ) {
+                                if( !($avatarUrl = $this->saveAvatar($avatar)) )
+                                {
+                                    $result['message'] = 'Не удалось сохранить аватар';
+                                    return $result; 
+                                }
+                            }  
+                            $salt = md5( time() . "+" . rand() );
                             $cryptPassword = $this->cryptPassword($password, $salt);
-                            if($this->saveUser($login, $cryptPassword, $salt, $role, $name, $age, $avatar)) {
-                                $result['message'] = 'Новорожденным запрещена регистрация';
+                            if( $this->saveUser($login, $cryptPassword, $salt, 'user', $name, $age, $avatarUrl) ){
+                                $result['message'] = 'пользователь успешно зарегистрирован';
                                 $result['result'] = true;
                             } else {
                                 $result['message'] = 'Не удалось сохранить нового пользователя';
-                            }
+                            }                         
+                            
                         } else {
-                            $result['message'] = 'Новорожденным запрещена регистрация';
+                            $result['message'] = 'Возраст должен быть > 0';
                         }
-                    } else {
-                        $result['message'] = 'Такой логин уже существует';
-                    }
+                    } else{
+                        $result['message'] = 'Пользователь с таким именени и паролем уже существует';
+                    }                  
                 } else {
-                    $result['message'] = 'Подтверждение пароля не совпало с паролем';
+                    $result['message'] = 'Пароль и подтверждение пароля не совпали';
                 }
             } else {
                 $result['message'] = 'Неверный формат пароля';
@@ -130,6 +155,7 @@ class Auth {
         } else {
             $result['message'] = 'Неверный формат логина';
         }
+        
         return $result;
     }
     
@@ -220,10 +246,11 @@ class Auth {
         }
         return false; 
     }
-
+    
     public function logout(){
         unset($_SESSION['userId']);
         setcookie('news_project_user', '', time() - 100, '/');
+        return true;
     }
 
     /**
@@ -403,5 +430,64 @@ class NewsItemWriter {
         $timestamp = strtotime($date);
         $formatedDate = date($format, $timestamp); 
         return $formatedDate;
+    }
+}
+
+class NewsDBPicker {
+    protected $_db;
+    
+    public function __construct() {
+        $this->_db = new DB();
+    }
+    
+    /**
+     * Выдёргивает из базы новость с id=$id и
+     * возвращает класс NewsItem с этой новостью
+     * @param integer $id
+     * @return NewsItem
+     * @throws Exception
+     */
+    public function newsPicker($id) {
+        $connection = $this->_db->connection();
+        $connection->beginTransaction();
+        $st = $connection->prepare("select * from news where newsId=:newsId");
+        $st->bindParam(':newsId', $id);
+        $st->setFetchMode(PDO::FETCH_CLASS, 'NewsItem');
+        if($st->execute() && $news_element = $st->fetch()) {
+            return $news_element;
+        } else {
+            throw new Exception("Cannot fetch news from db");
+        }
+    }
+    
+    public function pickNewsRange($id, $limit) {
+        $connection = $this->_db->connection();
+        $connection->beginTransaction();
+        $st = $connection->prepare("select * from news where newsId=:newsId order by publishDate desc limit=:limit");
+        $st->bindParam(':newsId', $id);
+        $st->bindParam(':limit', $limit);
+        $st->setFetchMode(PDO::FETCH_CLASS, 'NewsItem');
+        $newsArray = array();
+        if($st->execute()) {
+            while($obj = $st->fetch()) {
+                $newsArray[] = $obj;
+            }
+            return $newsArray;
+        } else {
+            throw new Exception('Cannot pick news from db.');
+            return false;
+        }
+    }
+    
+    public function countNews() {
+        $connection = $this->_db->connection();
+        $connection->query('SELECT COUNT(*) as count FROM news');
+        $connection->setFetchMode(PDO::FETCH_ASSOC);
+        if($count = $connection->fetch()) {
+            $counter = $connection['count'];
+            return $counter;
+        } else {
+            return false;
+        }
     }
 }
