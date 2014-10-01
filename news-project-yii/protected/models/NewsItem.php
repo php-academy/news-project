@@ -1,36 +1,25 @@
 <?php
 
 /**
- * This is the model class for table "comments".
+ * This is the model class for table "np_news_item".
  *
- * The followings are the available columns in table 'comments':
- * @property integer $userId
+ * The followings are the available columns in table 'np_news_item':
  * @property integer $newsId
- * @property string $publishDate
+ * @property string $title
  * @property string $text
+ * @property string $publish_date
  */
-class Comment extends CActiveForm {   
-    
-    public $commentId;
-    public $userId;
-    public $newsId;
-    public $publishDate;
-    public $commentText;
-    
-    
-    public function __construct($commentId, $userId, $newsId, $publishDate, $commentText) {
-        $this->commentId = $commentId;
-        $this->userId = $userId;
-        $this->newsId = $newsId;
-        $this->publishDate = $publishDate;
-        $this->commentText = $commentText;
-    }
+class NewsItem extends CActiveRecord
+{
+    const DEFAULT_CUT_LENGTH = 100;
+    const DEFAULT_DATE_FORMAT = 'd.m.Y H:i:s';
+
     /**
      * @return string the associated database table name
      */
     public function tableName()
     {
-        return 'comments';
+        return 'news';
     }
 
     /**
@@ -41,10 +30,10 @@ class Comment extends CActiveForm {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('text', 'length', 'max'=>300),
+            array('title, text, publish_date', 'required'),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('userId, newsId, publishDate, text', 'safe', 'on'=>'search'),
+            array('newsId, publish_date, title, text', 'safe', 'on'=>'search'),
         );
     }
 
@@ -65,10 +54,11 @@ class Comment extends CActiveForm {
     public function attributeLabels()
     {
         return array(
-            'userId' => 'User',
-            'newsId' => 'News',
-            'publishDate' => 'Publish Date',
-            'text' => 'Text',
+            'newsId' => 'ID нововсти',
+            'publish_date' => 'Дата публикация',
+            'title' => 'Название',
+            'text' => 'Содержание',
+            
         );
     }
 
@@ -90,10 +80,10 @@ class Comment extends CActiveForm {
 
         $criteria=new CDbCriteria;
 
-        $criteria->compare('userId',$this->userId);
         $criteria->compare('newsId',$this->newsId);
-        $criteria->compare('publishDate',$this->publishDate,true);
+        $criteria->compare('title',$this->title,true);
         $criteria->compare('text',$this->text,true);
+        $criteria->compare('publish_date',$this->publish_date,true);
 
         return new CActiveDataProvider($this, array(
             'criteria'=>$criteria,
@@ -104,10 +94,34 @@ class Comment extends CActiveForm {
      * Returns the static model of the specified AR class.
      * Please note that you should have this exact method in all your CActiveRecord descendants!
      * @param string $className active record class name.
-     * @return comment the static model class
+     * @return NewsItem the static model class
      */
     public static function model($className=__CLASS__)
     {
         return parent::model($className);
+    }
+
+    /**
+     * @param int $cut_length
+     * @return string
+     */
+    public function shortText( $cut_length = self::DEFAULT_CUT_LENGTH) {
+        $arText = explode('.', $this->text, 3);
+        $str = $arText[0];
+        if(isset($arText[1])) {
+            $str .= '. ' . $arText[1] . '.';
+        }
+
+        if( mb_strlen($str, 'UTF-8') < $cut_length ){
+            return $str;
+        } else {
+            return mb_substr($str, 0, $cut_length,'UTF-8') . ' ...';
+        }
+    }
+
+    public function formatDate( $format = self::DEFAULT_DATE_FORMAT){
+        $timestamp = strtotime($this->publish_date);
+        $formattedDate = date($format, $timestamp);
+        return $formattedDate;
     }
 }

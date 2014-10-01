@@ -33,7 +33,7 @@ class NpNewsItem extends CActiveRecord
             array('title, text, publishDate', 'required'),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('newsId, title, text, publishDate', 'safe', 'on'=>'search'),
+            array('newsId, publishDate, title, text', 'safe', 'on'=>'search'),
         );
     }
 
@@ -55,9 +55,9 @@ class NpNewsItem extends CActiveRecord
     {
         return array(
             'newsId' => 'News',
-            'title' => 'Title',
-            'text' => 'Text',
             'publishDate' => 'Publish Date',
+            'title' => 'Title',
+            'text' => 'Text',            
         );
     }
 

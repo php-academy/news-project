@@ -1,15 +1,7 @@
 <?php
 
-class CommentController extends Controller
-{
-    public function actionIndex()
-    {
-        if(!Yii::app()->user->isGuest) {
-            
-        } else {
-            echo "<p>Войдите, чтобы оставлять комментарии.</p>";
-        }
-    }
+class CommentController extends Controller {
+    
 
     // Uncomment the following methods and override them if needed
     /*
