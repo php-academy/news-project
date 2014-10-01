@@ -30,10 +30,10 @@ class NewsItem extends CActiveRecord
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('title, text, publish_date', 'required'),
+            array('title, text, publishDate', 'required'),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('newsId, publish_date, title, text', 'safe', 'on'=>'search'),
+            array('newsId, publishDate, title, text', 'safe', 'on'=>'search'),
         );
     }
 
@@ -55,7 +55,7 @@ class NewsItem extends CActiveRecord
     {
         return array(
             'newsId' => 'ID нововсти',
-            'publish_date' => 'Дата публикация',
+            'publishDate' => 'Дата публикация',
             'title' => 'Название',
             'text' => 'Содержание',
             
@@ -83,7 +83,7 @@ class NewsItem extends CActiveRecord
         $criteria->compare('newsId',$this->newsId);
         $criteria->compare('title',$this->title,true);
         $criteria->compare('text',$this->text,true);
-        $criteria->compare('publish_date',$this->publish_date,true);
+        $criteria->compare('publishDate',$this->publish_date,true);
 
         return new CActiveDataProvider($this, array(
             'criteria'=>$criteria,
