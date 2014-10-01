@@ -466,7 +466,7 @@ class NewsDBPicker {
         $st = $connection->prepare("select * from news where newsId=:newsId");
         $st->bindParam(':newsId', $id);
         $st->setFetchMode(PDO::FETCH_CLASS, 'NewsItem');
-        if($st->execute() && $news_element = $st->fetch()) {
+        if(($st->execute()) && ($news_element = $st->fetch())) {
             return $news_element;
         } else {
             throw new Exception("Cannot fetch news from db");
