@@ -14,7 +14,7 @@ class NewsController extends Controller{
         $newsItems = NpNewsItem::model()->findAll($criteria);
         
         $this->render('index', array(
-            'newsItems' => $items,
+            'newsItems' => $newsItems,
             'pages' => $pages, 
         ));
     }

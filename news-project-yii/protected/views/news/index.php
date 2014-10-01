@@ -3,7 +3,7 @@
  * @var array $newsItems
  * @var NpNewsItem $item
  */
-foreach( $items as $item ) {
+foreach( $newsItems as $item ) {
    $this->renderPartial('_newsItem', array('item' => $item));
 }
 
