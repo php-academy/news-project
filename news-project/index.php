@@ -20,8 +20,8 @@
         echo "Страница не найдена";
     } else {
         $news_pickFrom = ($page-1)*$news_per_page;
-        $news = $news->pickNewsRange($news_pickFrom, $news_per_page);
-        foreach($news as $id => $news_element) {
+        $news_range = $news->pickNewsRange($news_pickFrom, $news_per_page);
+        foreach($news_range as $id => $news_element) {
             NewsItemWriter::writeShortNews($news_element);
         }
     }
